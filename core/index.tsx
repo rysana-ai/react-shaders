@@ -517,8 +517,7 @@ export class Shader extends Component<Props, unknown> {
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       this.props.onWarning(
-        RSLOG('Error compiling the shader:'),
-        shaderCodeAsText,
+        RSLOG(`Error compiling the shader:\n${shaderCodeAsText}`),
       )
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
