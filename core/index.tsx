@@ -90,9 +90,11 @@ type Props = {
   precision?: string
   style?: CSSStyleDeclaration
   contextAttributes?: Record<string, unknown>
-  onDoneLoadingTextures?: () => void
   lerp?: number
   devicePixelRatio?: number
+  onDoneLoadingTextures?: () => void
+  onError: typeof console.error
+  onWarn: typeof console.warn
 }
 
 type Shaders = {
@@ -181,6 +183,8 @@ export class Shader extends Component<Props, unknown> {
     devicePixelRatio: 1,
     vs: BASIC_VS,
     precision: 'highp',
+    onError: console.error,
+    onWarn: console.warn,
   }
 
   componentDidMount = () => {
@@ -512,13 +516,15 @@ export class Shader extends Component<Props, unknown> {
     gl.compileShader(shader)
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.warn(
+      this.props.onWarn(
         RSLOG('Error compiling the shader:'),
         shaderCodeAsText,
       )
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
-      console.error(RSLOG(`Shader compiler log: ${compilationLog}`))
+      this.props.onError(
+        RSLOG(`Shader compiler log: ${compilationLog}`),
+      )
     }
 
     return shader
@@ -542,7 +548,7 @@ export class Shader extends Component<Props, unknown> {
     gl.linkProgram(this.shaderProgram)
 
     if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS)) {
-      console.error(
+      this.props.onError(
         RSLOG(
           `Unable to initialize the shader program: ${gl.getProgramInfoLog(
             this.shaderProgram,
@@ -661,7 +667,7 @@ export class Shader extends Component<Props, unknown> {
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
         .catch((e) => {
-          console.error(e)
+          this.props.onError(e)
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
     } else {
@@ -678,7 +684,7 @@ export class Shader extends Component<Props, unknown> {
       isValidPrecision ? precision : PRECISIONS[1]
     } float;\n`
     if (!isValidPrecision)
-      console.warn(
+      this.props.onWarn(
         RSLOG(
           `wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`,
         ),

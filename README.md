@@ -94,8 +94,10 @@ Here are a few built in react props you can pass to your component. Feel free to
 - `devicePixelRatio` -- A value passed to set the [pixel density](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) of the canvas. By default `1`.
 - `contextAttributes` -- To customize your [WebGL context attributes.](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext)
 - `style` -- Pass a [React Inline style](https://reactjs.org/docs/dom-elements.html#style) to customize the style of your canvas.
-- `onDoneLoadingTextures` -- Callback called once all textures are done being loaded, usefull when you want to wait for your shader to have all the needed texture before seeing it on screen. Using that callback you could for example simply fade the canvas in using css.
 - `lerp` -- A value in between `0` - `1` used to lerp the mouse position in your fragment shader.
+- `onDoneLoadingTextures` -- Callback called once all textures are done being loaded, usefull when you want to wait for your shader to have all the needed texture before seeing it on screen. Using that callback you could for example simply fade the canvas in using css.
+- `onErrror` -- Callback called if an error occurs while loading your shader or textures. Defaults to `console.error`.
+- `onWarn` -- Callback called if a warning occurs while loading your shader or textures. Defaults to `console.warn`.
 
 ## Uniforms
 
