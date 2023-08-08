@@ -86,18 +86,78 @@ void main(void) {
 
 Here are a few built in react props you can pass to your component. Feel free to suggest more.
 
-- `fs` -- A string containing your fragment shader.
-- `textures` -- An array of textures objects following that structure `{url: ... , minFilter: , magFilter: , wrapS: , wrapT: }` the format supported are (`.jpg, .jpeg, .png, .bmp`) for images, and (`.mp4, .3gp, .webm, .ogv`) for videos. Textures needs to be squared otherwise they will be automatically squared for you. `minFilter`, `magFilter`, `wrapS`, `wrapT` are optionals, by default their values are set to `{url: ... , minFilter: LinearMipMapLinearFilter, magFilter: LinearFilter, wrapS: ReapeatWrapping, wrapT: ReapeatWrapping}`.
-- `uniforms` -- An object containing uniforms objects following that structure `{ uTest: {type: , value: }, uTest2: {type: , value: }, uTest3: {type: , value: } ... }`. To know more about the supported types please refer to the [custom uniforms section](#Custom-uniforms).
-- `clearColor` -- An array `[red, green, blue, alpha]` Specifies the color values used when clearing color buffers method of the [WebGL API](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clearColor) by default `[0, 0, 0, 1]`.
-- `precision` -- GLSL Precision qualifier, by default highp, it can be lowp, mediump, highp depending on how much precision the GPU uses when calculating floats.
-- `devicePixelRatio` -- A value passed to set the [pixel density](https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio) of the canvas. By default `1`.
-- `contextAttributes` -- To customize your [WebGL context attributes.](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext)
-- `style` -- Pass a [React Inline style](https://reactjs.org/docs/dom-elements.html#style) to customize the style of your canvas.
-- `lerp` -- A value in between `0` - `1` used to lerp the mouse position in your fragment shader.
-- `onDoneLoadingTextures` -- Callback called once all textures are done being loaded, usefull when you want to wait for your shader to have all the needed texture before seeing it on screen. Using that callback you could for example simply fade the canvas in using css.
-- `onErrror` -- Callback called if an error occurs while loading your shader or textures. Defaults to `console.error`.
-- `onWarning` -- Callback called if a warning occurs while loading your shader or textures. Defaults to `console.warn`.
+````ts
+type Props = {
+  /** Fragment shader GLSL code. */
+  fs: string
+  /** Vertex shader GLSL code. */
+  vs?: string
+  /**
+   * Textures to be passed to the shader. Textures need to be squared or
+   * will be automatically resized.
+   *
+   * Options default to:
+   *
+   * ```js
+   * {
+   *   minFilter: LinearMipMapLinearFilter,
+   *   magFilter: LinearFilter,
+   *   wrapS: RepeatWrapping,
+   *   wrapT: RepeatWrapping,
+   * }
+   * ```
+   *
+   * See [textures in the
+   * docs](https://rysana.com/docs/react-shaders#textures) for details.
+   */
+  textures?: TexturePropsType[]
+  /**
+   * Custom uniforms to be passed to the shader.
+   *
+   * See [custom uniforms in the
+   * docs](https://rysana.com/docs/react-shaders#custom-uniforms) for
+   * details.
+   */
+  uniforms?: Uniforms
+  /**
+   * Color used when clearing the canvas.
+   *
+   * See [the WebGL
+   * docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clearColor)
+   * for details.
+   */
+  clearColor?: Vector4
+  /**
+   * GLSL precision qualifier. Defaults to `'highp'`. Balance between
+   * performance and quality.
+   */
+  precision?: 'highp' | 'lowp' | 'mediump'
+  /** Custom inline style for canvas. */
+  style?: CSSStyleDeclaration
+  /**
+   * Customize WebGL context attributes.
+   *
+   * See [the WebGL
+   * docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getContextAttributes)
+   * for details.
+   */
+  contextAttributes?: Record<string, unknown>
+  /** Lerp value for `iMouse` built-in uniform. Must be between 0 and 1. */
+  lerp?: number
+  /** Device pixel ratio. */
+  devicePixelRatio?: number
+  /**
+   * Callback for when the textures are done loading. Useful if you want
+   * to do something like e.g. hide the canvas until textures are done
+   * loading.
+   */
+  onDoneLoadingTextures?: () => void
+  /** Custom callback to handle errors. Defaults to `console.error`. */
+  onError?: (error: string) => void
+  /** Custom callback to handle warnings. Defaults to `console.warn`. */
+  onWarning?: (warning: string) => void
+}
+````
 
 ## Uniforms
 

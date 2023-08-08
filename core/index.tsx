@@ -82,19 +82,74 @@ type Uniform = {
 export type Uniforms = Record<string, Uniform>
 
 type Props = {
+  /** Fragment shader GLSL code. */
   fs: string
+  /** Vertex shader GLSL code. */
   vs?: string
+  /**
+   * Textures to be passed to the shader. Textures need to be squared or
+   * will be automatically resized.
+   *
+   * Options default to:
+   *
+   * ```js
+   * {
+   *   minFilter: LinearMipMapLinearFilter,
+   *   magFilter: LinearFilter,
+   *   wrapS: RepeatWrapping,
+   *   wrapT: RepeatWrapping,
+   * }
+   * ```
+   *
+   * See [textures in the
+   * docs](https://rysana.com/docs/react-shaders#textures) for details.
+   */
   textures?: TexturePropsType[]
+  /**
+   * Custom uniforms to be passed to the shader.
+   *
+   * See [custom uniforms in the
+   * docs](https://rysana.com/docs/react-shaders#custom-uniforms) for
+   * details.
+   */
   uniforms?: Uniforms
+  /**
+   * Color used when clearing the canvas.
+   *
+   * See [the WebGL
+   * docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/clearColor)
+   * for details.
+   */
   clearColor?: Vector4
-  precision?: string
+  /**
+   * GLSL precision qualifier. Defaults to `'highp'`. Balance between
+   * performance and quality.
+   */
+  precision?: 'highp' | 'lowp' | 'mediump'
+  /** Custom inline style for canvas. */
   style?: CSSStyleDeclaration
+  /**
+   * Customize WebGL context attributes.
+   *
+   * See [the WebGL
+   * docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getContextAttributes)
+   * for details.
+   */
   contextAttributes?: Record<string, unknown>
+  /** Lerp value for `iMouse` built-in uniform. Must be between 0 and 1. */
   lerp?: number
+  /** Device pixel ratio. */
   devicePixelRatio?: number
+  /**
+   * Callback for when the textures are done loading. Useful if you want
+   * to do something like e.g. hide the canvas until textures are done
+   * loading.
+   */
   onDoneLoadingTextures?: () => void
-  onError: typeof console.error
-  onWarning: typeof console.warn
+  /** Custom callback to handle errors. Defaults to `console.error`. */
+  onError?: (error: string) => void
+  /** Custom callback to handle warnings. Defaults to `console.warn`. */
+  onWarning?: (warning: string) => void
 }
 
 type Shaders = {
@@ -516,12 +571,12 @@ export class Shader extends Component<Props, unknown> {
     gl.compileShader(shader)
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      this.props.onWarning(
+      this.props.onWarning?.(
         RSLOG(`Error compiling the shader:\n${shaderCodeAsText}`),
       )
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
-      this.props.onError(
+      this.props.onError?.(
         RSLOG(`Shader compiler log: ${compilationLog}`),
       )
     }
@@ -547,7 +602,7 @@ export class Shader extends Component<Props, unknown> {
     gl.linkProgram(this.shaderProgram)
 
     if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS)) {
-      this.props.onError(
+      this.props.onError?.(
         RSLOG(
           `Unable to initialize the shader program: ${gl.getProgramInfoLog(
             this.shaderProgram,
@@ -666,7 +721,7 @@ export class Shader extends Component<Props, unknown> {
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
         .catch((e) => {
-          this.props.onError(e)
+          this.props.onError?.(e)
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
     } else {
@@ -683,7 +738,7 @@ export class Shader extends Component<Props, unknown> {
       isValidPrecision ? precision : PRECISIONS[1]
     } float;\n`
     if (!isValidPrecision)
-      this.props.onWarning(
+      this.props.onWarning?.(
         RSLOG(
           `wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`,
         ),
