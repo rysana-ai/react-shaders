@@ -38,7 +38,11 @@ pnpm i react-shaders
 yarn add react-shaders
 ```
 
-## `<Shader />` component
+## Documentation
+
+Please read the docs on the website: [https://rysana.com/docs/react-shaders](https://rysana.com/docs/react-shaders)
+
+<!-- ## `<Shader />` component
 
 The `<Shader />` component is a lightweight React component for creating responsive, full canvas shaders through WebGL to any `react-dom` app. It supports the [Shadertoy](https://www.shadertoy.com)/[Rysana](https://rysana.com/shader-playground) GLSL syntax, as well as the classic GLSL syntax, allowing you to easily copy and paste shaders from Shadertoy or Rysana Shader Playground into your applications with no need to modify the code.
 
@@ -336,7 +340,7 @@ const Example = () => (
 - ~~Add built in uniform for phone device orientation / gyroscope based effects.~~ v1.0.0
 - ~~Add support for iDate.~~ v1.0.0
 - ~~Add support for video textures.~~ v1.0.0
-- ~~Add support for iChannelResolution.~~ v1.0.0
+- ~~Add support for iChannelResolution.~~ v1.0.0 -->
 
 ## Contributors
 
