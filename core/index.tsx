@@ -565,8 +565,9 @@ export class Shader extends Component<Props, unknown> {
     const { uniforms } = this.props
     if (uniforms) {
       Object.keys(uniforms).forEach((name: string) => {
-        // @ts-expect-error TODO: Deal with this.
-        const { value, type } = this.props.uniforms[name]
+        const uniform = this.props.uniforms?.[name]
+        if (!uniform) return
+        const { value, type } = uniform
 
         const glslType = uniformTypeToGLSLType(type)
         if (!glslType) return
@@ -723,8 +724,8 @@ export class Shader extends Component<Props, unknown> {
 
     if (this.props.uniforms) {
       Object.keys(this.props.uniforms).forEach((name) => {
-        // @ts-expect-error TODO: Deal with this.
-        const currentUniform: Uniform = this.props.uniforms[name]
+        const currentUniform = this.props.uniforms?.[name]
+        if (!currentUniform) return
         if (this.uniforms[name]?.isNeeded) {
           if (!this.shaderProgram) return
           const customUniformLocation = gl.getUniformLocation(
