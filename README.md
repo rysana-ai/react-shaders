@@ -97,7 +97,7 @@ Here are a few built in react props you can pass to your component. Feel free to
 - `lerp` -- A value in between `0` - `1` used to lerp the mouse position in your fragment shader.
 - `onDoneLoadingTextures` -- Callback called once all textures are done being loaded, usefull when you want to wait for your shader to have all the needed texture before seeing it on screen. Using that callback you could for example simply fade the canvas in using css.
 - `onErrror` -- Callback called if an error occurs while loading your shader or textures. Defaults to `console.error`.
-- `onWarn` -- Callback called if a warning occurs while loading your shader or textures. Defaults to `console.warn`.
+- `onWarning` -- Callback called if a warning occurs while loading your shader or textures. Defaults to `console.warn`.
 
 ## Uniforms
 

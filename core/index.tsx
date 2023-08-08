@@ -94,7 +94,7 @@ type Props = {
   devicePixelRatio?: number
   onDoneLoadingTextures?: () => void
   onError: typeof console.error
-  onWarn: typeof console.warn
+  onWarning: typeof console.warn
 }
 
 type Shaders = {
@@ -516,7 +516,7 @@ export class Shader extends Component<Props, unknown> {
     gl.compileShader(shader)
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      this.props.onWarn(
+      this.props.onWarning(
         RSLOG('Error compiling the shader:'),
         shaderCodeAsText,
       )
@@ -684,7 +684,7 @@ export class Shader extends Component<Props, unknown> {
       isValidPrecision ? precision : PRECISIONS[1]
     } float;\n`
     if (!isValidPrecision)
-      this.props.onWarn(
+      this.props.onWarning(
         RSLOG(
           `wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`,
         ),
