@@ -100,6 +100,15 @@ type Shaders = {
   vs: string
 }
 
+const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
+  return [
+    // @ts-expect-error TODO: Deal with this.
+    e.clientX || e.changedTouches[0].clientX,
+    // @ts-expect-error TODO: Deal with this.
+    (clientY = e.clientY || e.changedTouches[0].clientY),
+  ]
+}
+
 const lerpVal = (v0: number, v1: number, t: number) =>
   v0 * (1 - t) + v1 * t
 const insertStringAtIndex = (
@@ -362,10 +371,7 @@ export class Shader extends Component<Props, unknown> {
   }
 
   mouseDown = (e: MouseEvent | TouchEvent) => {
-    // @ts-expect-error TODO: Deal with this.
-    const clientX = e.clientX || e.changedTouches[0].clientX
-    // @ts-expect-error TODO: Deal with this.
-    const clientY = e.clientY || e.changedTouches[0].clientY
+    const [clientX, clientY] = latestPointerClientCoords(e)
 
     const mouseX =
       clientX - (this.canvasPosition?.left ?? 0) - window.pageXOffset
@@ -390,10 +396,7 @@ export class Shader extends Component<Props, unknown> {
     this.canvasPosition = this.canvas?.getBoundingClientRect()
     const { lerp = 1 } = this.props
 
-    // @ts-expect-error TODO: Deal with this.
-    const clientX = e.clientX || e.changedTouches[0].clientX
-    // @ts-expect-error TODO: Deal with this.
-    const clientY = e.clientY || e.changedTouches[0].clientY
+    const [clientX, clientY] = latestPointerClientCoords(e)
 
     const mouseX = clientX - (this.canvasPosition?.left ?? 0)
     const mouseY =
