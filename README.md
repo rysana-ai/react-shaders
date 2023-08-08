@@ -275,3 +275,23 @@ const Example = () => (
 - ~~Add support for iDate.~~ v1.0.0
 - ~~Add support for video textures.~~ v1.0.0
 - ~~Add support for iChannelResolution.~~ v1.0.0
+
+## Contributors
+
+### Credits to original authors:
+
+- **Morgan Villedieu** @mvilledieu
+  - Code, creator of [shadertoy-react](https://github.com/mvilledieu/shadertoy-react)
+- **Charlie Hoey** @flimshaw
+  - Code, contributed to [shadertoy-react](https://github.com/mvilledieu/shadertoy-react)
+- **Iñigo Quilez**
+  - Shadertoy GL syntax, creator of [Shadertoy](https://www.shadertoy.com)
+- **Pol Jeremias**
+  - Shadertoy GL syntax, creator of [Shadertoy](https://www.shadertoy.com)
+
+### Credits to contributors:
+
+- **John** @jrysana
+  - Code
+- **aremorov** @aremorov
+  - Code
