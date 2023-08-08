@@ -280,18 +280,16 @@ const Example = () => (
 
 ### Credits to original authors:
 
-- **Morgan Villedieu** @mvilledieu
+- **Morgan Villedieu** [@mvilledieu](https://github.com/mvilledieu)
   - Code, creator of [shadertoy-react](https://github.com/mvilledieu/shadertoy-react)
-- **Charlie Hoey** @flimshaw
+- **Charlie Hoey** [@flimshaw](https://github.com/flimshaw)
   - Code, contributed to [shadertoy-react](https://github.com/mvilledieu/shadertoy-react)
-- **Iñigo Quilez**
-  - Shadertoy GL syntax, creator of [Shadertoy](https://www.shadertoy.com)
-- **Pol Jeremias**
-  - Shadertoy GL syntax, creator of [Shadertoy](https://www.shadertoy.com)
+- **Iñigo Quilez & Pol Jeremias**
+  - Shadertoy GL syntax, creators of [Shadertoy](https://www.shadertoy.com)
 
 ### Credits to contributors:
 
-- **John** @jrysana
+- **John** [@jrysana](https://github.com/jrysana)
   - Code
-- **aremorov** @aremorov
+- **aremorov** [@aremorov](https://github.com/aremorov)
   - Code
