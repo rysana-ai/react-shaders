@@ -44,7 +44,7 @@ Please read the docs on the website: [https://rysana.com/docs/react-shaders](htt
 
 <!-- ## `<Shader />` component
 
-The `<Shader />` component is a lightweight React component for creating responsive, full canvas shaders through WebGL to any `react-dom` app. It supports the [Shadertoy](https://www.shadertoy.com)/[Rysana](https://rysana.com/shader-playground) GLSL syntax, as well as the classic GLSL syntax, allowing you to easily copy and paste shaders from Shadertoy or Rysana Shader Playground into your applications with no need to modify the code.
+The `<Shader />` component is a lightweight React component for creating responsive, full canvas shaders through WebGL to any `react-dom` app. It supports the [Shadertoy](https://www.shadertoy.com)/[Rysana](https://rysana.com/code/glsl) GLSL syntax, as well as the classic GLSL syntax, allowing you to easily copy and paste shaders from Shadertoy or Rysana Shader Playground into your applications with no need to modify the code.
 
 It also supports a wide range of built-in uniforms like playback time, resolution, mouse position, and even phone gyroscope position, and allows you to pass custom uniforms as props.
 
@@ -54,7 +54,7 @@ It also supports a wide range of built-in uniforms like playback time, resolutio
 
 ### Playground
 
-We're working on a more direct playground for this library, but you can try out the underlying library on [Rysana Shader Playground](https://rysana.com/shader-playground) for the time being.
+We're working on a more direct playground for this library, but you can try out the underlying library on [Rysana Shader Playground](https://rysana.com/code/glsl) for the time being.
 
 ### How to use it
 
