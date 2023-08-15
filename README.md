@@ -46,8 +46,8 @@ Please read the docs on the website: [https://rysana.com/docs/react-shaders](htt
 
 <table>
 <tr>
-<th width="440px" align="center"><code>index.tsx</code></th>
-<th width="440px" align="center"><code>example.glsl</code></th>
+<th><code>index.tsx</code></th>
+<th><code>example.glsl</code></th>
 </tr>
 <tr>
 <td>
