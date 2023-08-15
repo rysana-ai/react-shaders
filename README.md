@@ -45,14 +45,10 @@ Please read the docs on the website: [https://rysana.com/docs/react-shaders](htt
 ### Basic example
 
 <table>
-<tr>
-<th><code>index.tsx</code></th>
-<th><code>example.glsl</code></th>
-</tr>
-<tr>
 <td>
 
 ```jsx
+// index.tsx
 import { Shader } from 'react-shaders'
 import code from './example.glsl'
 
@@ -65,6 +61,7 @@ return (
 <td>
 
 ```glsl
+// example.glsl
 void mainImage(out vec4 O,in vec2 I){
   I=.5-(I/iResolution.xy);
   vec3 col=.5+vec3(I,.5*sin(iTime));
