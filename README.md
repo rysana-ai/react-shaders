@@ -42,6 +42,40 @@ yarn add react-shaders
 
 Please read the docs on the website: [https://rysana.com/docs/react-shaders](https://rysana.com/docs/react-shaders)
 
+### Basic example
+
+<table>
+<tr>
+<th width="440px" align="center"><code>index.tsx</code></th>
+<th width="440px" align="center"><code>example.glsl</code></th>
+</tr>
+<tr>
+<td>
+
+```jsx
+import { Shader } from 'react-shaders'
+import code from './example.glsl'
+return (
+  <Shader fs={code} />
+)
+```
+
+</td>
+<td>
+
+```glsl
+void mainImage(out vec4 O,in vec2 I){
+  I=.5-(I/iResolution.xy);
+  vec3 col=.5+vec3(I,.5*sin(iTime));
+  I*=vec2(1.,iResolution.y/iResolution.x);
+  float z=.5*sin((dot(I,I)+iTime*5e-2)/.01);
+  O=vec4(col*(1.+z),1.);}
+```
+
+</td>
+</tr>
+</table>
+
 <!-- ## `<Shader />` component
 
 The `<Shader />` component is a lightweight React component for creating responsive, full canvas shaders through WebGL to any `react-dom` app. It supports the [Shadertoy](https://www.shadertoy.com)/[Rysana](https://rysana.com/code/glsl) GLSL syntax, as well as the classic GLSL syntax, allowing you to easily copy and paste shaders from Shadertoy or Rysana Shader Playground into your applications with no need to modify the code.
