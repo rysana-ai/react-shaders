@@ -63,6 +63,8 @@ void mainImage(out vec4 O,in vec2 I){
 
 ## Installation
 
+You can install `react-shaders` with `npm`, `pnpm`, or `yarn`, and you can build it from source with the `build` script.
+
 <table>
 <tr>
 <th width="292px"><code>npm</code></th>
