@@ -55,6 +55,7 @@ Please read the docs on the website: [https://rysana.com/docs/react-shaders](htt
 ```jsx
 import { Shader } from 'react-shaders'
 import code from './example.glsl'
+
 return (
   <Shader fs={code} />
 )
