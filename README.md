@@ -6,37 +6,21 @@ Modern GLSL/WebGL bindings & components for React and Typescript.
 npm i react-shaders
 ```
 
+**React Shaders** is [Rysana's](https://rysana.com) open source library for creating GLSL/WebGL shaders in React and Typescript, with support for modern shader bindings like those in Shadertoy and Rysana. `react-shaders` is built on the combined work of [Morgan Villedieu's `shadertoy-react`](https://github.com/mvilledieu/shadertoy-react) and some modifications by [Rysana](https://rysana.com).
+
 <p align="center">
   <hr />
   <p align="center">
     <a href="https://rysana.com/log?topic=react-shaders">Log</a>
-    ·
+    --
     <a href="https://rysana.com/docs/react-shaders">Website</a>
-    ·
+    --
     <a href="https://rysana.com/docs/react-shaders">Docs</a>
-    ·
+    --
     <a href="https://rysana.com">Rysana</a>
   </p>
   <hr />
 </p>
-
-## Usage
-
-**React Shaders** is [Rysana's](https://rysana.com) open source library for creating GLSL/WebGL shaders in React and Typescript, with support for modern shader bindings like those in Shadertoy and Rysana. `react-shaders` is built on the combined work of [Morgan Villedieu's `shadertoy-react`](https://github.com/mvilledieu/shadertoy-react) and some modifications by [Rysana](https://rysana.com).
-
-You can install Lusat with `npm`, `pnpm`, or `yarn`:
-
-```bash
-npm i react-shaders
-```
-
-```bash
-pnpm i react-shaders
-```
-
-```bash
-yarn add react-shaders
-```
 
 ## Documentation
 
@@ -71,6 +55,39 @@ void mainImage(out vec4 O,in vec2 I){
   I*=vec2(1.,iResolution.y/iResolution.x);
   float z=.5*sin((dot(I,I)+iTime*5e-2)/.01);
   O=vec4(col*(1.+z),1.);}
+```
+
+</td>
+</tr>
+</table>
+
+## Installation
+
+<table>
+<tr>
+<th width="292px"><code>npm</code></th>
+<th width="292px"><code>pnpm</code></th>
+<th width="292px"><code>yarn</code></th>
+</tr>
+<tr>
+<td>
+
+```bash
+npm i react-shaders
+```
+
+</td>
+<td>
+
+```bash
+pnpm i react-shaders
+```
+
+</td>
+<td>
+
+```bash
+yarn add react-shaders
 ```
 
 </td>
