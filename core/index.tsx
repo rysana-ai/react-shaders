@@ -87,8 +87,8 @@ type Props = {
   /** Vertex shader GLSL code. */
   vs?: string
   /**
-   * Textures to be passed to the shader. Textures need to be squared or
-   * will be automatically resized.
+   * Textures to be passed to the shader. Textures need to be squared or will be
+   * automatically resized.
    *
    * Options default to:
    *
@@ -101,16 +101,15 @@ type Props = {
    * }
    * ```
    *
-   * See [textures in the
-   * docs](https://rysana.com/docs/react-shaders#textures) for details.
+   * See [textures in the docs](https://rysana.com/docs/react-shaders#textures)
+   * for details.
    */
   textures?: TexturePropsType[]
   /**
    * Custom uniforms to be passed to the shader.
    *
    * See [custom uniforms in the
-   * docs](https://rysana.com/docs/react-shaders#custom-uniforms) for
-   * details.
+   * docs](https://rysana.com/docs/react-shaders#custom-uniforms) for details.
    */
   uniforms?: Uniforms
   /**
@@ -141,9 +140,8 @@ type Props = {
   /** Device pixel ratio. */
   devicePixelRatio?: number
   /**
-   * Callback for when the textures are done loading. Useful if you want
-   * to do something like e.g. hide the canvas until textures are done
-   * loading.
+   * Callback for when the textures are done loading. Useful if you want to do
+   * something like e.g. hide the canvas until textures are done loading.
    */
   onDoneLoadingTextures?: () => void
   /** Custom callback to handle errors. Defaults to `console.error`. */
@@ -166,8 +164,7 @@ const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
   ]
 }
 
-const lerpVal = (v0: number, v1: number, t: number) =>
-  v0 * (1 - t) + v1 * t
+const lerpVal = (v0: number, v1: number, t: number) => v0 * (1 - t) + v1 * t
 const insertStringAtIndex = (
   currentString: string,
   string: string,
@@ -260,10 +257,7 @@ export class Shader extends Component<Props, unknown> {
 
       this.processCustomUniforms()
       this.processTextures()
-      const shaders = this.preProcessShaders(
-        fs || BASIC_FS,
-        vs || BASIC_VS,
-      )
+      const shaders = this.preProcessShaders(fs || BASIC_FS, vs || BASIC_VS)
       this.initShaders(shaders)
       this.initBuffers()
       // @ts-expect-error apparently this thing needs a timestamp but it's not used?
@@ -301,8 +295,7 @@ export class Shader extends Component<Props, unknown> {
   setupChannelRes = ({ width, height }: Texture, id: number) => {
     const { devicePixelRatio = 1 } = this.props
     // @ts-expect-error TODO: Deal with this.
-    this.uniforms.iChannelResolution.value[id * 3] =
-      width * devicePixelRatio
+    this.uniforms.iChannelResolution.value[id * 3] = width * devicePixelRatio
     // @ts-expect-error TODO: Deal with this.
     this.uniforms.iChannelResolution.value[id * 3 + 1] =
       height * devicePixelRatio
@@ -334,11 +327,7 @@ export class Shader extends Component<Props, unknown> {
       1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0,
     ]
 
-    gl?.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(vertices),
-      gl.STATIC_DRAW,
-    )
+    gl?.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
   }
 
   addEventListeners = () => {
@@ -354,11 +343,7 @@ export class Shader extends Component<Props, unknown> {
 
       this.canvas.addEventListener('touchmove', this.mouseMove, options)
       this.canvas.addEventListener('touchend', this.mouseUp, options)
-      this.canvas.addEventListener(
-        'touchstart',
-        this.mouseDown,
-        options,
-      )
+      this.canvas.addEventListener('touchstart', this.mouseDown, options)
     }
 
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
@@ -378,30 +363,14 @@ export class Shader extends Component<Props, unknown> {
     } as EventListenerOptions
 
     if (this.uniforms.iMouse?.isNeeded && this.canvas) {
-      this.canvas.removeEventListener(
-        'mousemove',
-        this.mouseMove,
-        options,
-      )
+      this.canvas.removeEventListener('mousemove', this.mouseMove, options)
       this.canvas.removeEventListener('mouseout', this.mouseUp, options)
       this.canvas.removeEventListener('mouseup', this.mouseUp, options)
-      this.canvas.removeEventListener(
-        'mousedown',
-        this.mouseDown,
-        options,
-      )
+      this.canvas.removeEventListener('mousedown', this.mouseDown, options)
 
-      this.canvas.removeEventListener(
-        'touchmove',
-        this.mouseMove,
-        options,
-      )
+      this.canvas.removeEventListener('touchmove', this.mouseMove, options)
       this.canvas.removeEventListener('touchend', this.mouseUp, options)
-      this.canvas.removeEventListener(
-        'touchstart',
-        this.mouseDown,
-        options,
-      )
+      this.canvas.removeEventListener('touchstart', this.mouseDown, options)
     }
 
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
@@ -576,9 +545,7 @@ export class Shader extends Component<Props, unknown> {
       )
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
-      this.props.onError?.(
-        RSLOG(`Shader compiler log: ${compilationLog}`),
-      )
+      this.props.onError?.(RSLOG(`Shader compiler log: ${compilationLog}`))
     }
 
     return shader
@@ -632,10 +599,7 @@ export class Shader extends Component<Props, unknown> {
         const glslType = uniformTypeToGLSLType(type)
         if (!glslType) return
 
-        function isMatrixType(
-          t: string,
-          v: number[] | number,
-        ): v is number[] {
+        function isMatrixType(t: string, v: number[] | number): v is number[] {
           return t.includes('Matrix') && Array.isArray(v)
         }
 
@@ -656,9 +620,7 @@ export class Shader extends Component<Props, unknown> {
         if (isMatrixType(type, value)) {
           const arrayLength = type.length
           const val = parseInt(type.charAt(arrayLength - 3))
-          const numberOfMatrices = Math.floor(
-            value.length / (val * val),
-          )
+          const numberOfMatrices = Math.floor(value.length / (val * val))
 
           if (value.length > val * val) {
             tempObject.arraySize = `[${numberOfMatrices}]`
@@ -808,10 +770,7 @@ export class Shader extends Component<Props, unknown> {
         this.shaderProgram,
         UNIFORM_MOUSE,
       )
-      gl.uniform4fv(
-        mouseUniform,
-        this.uniforms.iMouse.value as number[],
-      )
+      gl.uniform4fv(mouseUniform, this.uniforms.iMouse.value as number[])
     }
 
     if (
@@ -879,17 +838,13 @@ export class Shader extends Component<Props, unknown> {
         this.shaderProgram,
         UNIFORM_FRAME,
       )
-      gl.uniform1i(
-        timeDeltaUniform,
-        (this.uniforms.iFrame.value as number)++,
-      )
+      gl.uniform1i(timeDeltaUniform, (this.uniforms.iFrame.value as number)++)
     }
 
     if (this.texturesArr.length > 0) {
       // @ts-expect-error TODO: Deal with this.
       this.texturesArr.forEach((texture: Texture, id: number) => {
-        const { isVideo, _webglTexture, source, flipY, isLoaded } =
-          texture
+        const { isVideo, _webglTexture, source, flipY, isLoaded } = texture
         if (!isLoaded) return
         if (this.uniforms[`iChannel${id}`]?.isNeeded) {
           if (!this.shaderProgram) return

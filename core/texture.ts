@@ -14,10 +14,7 @@ export const RepeatWrapping = 10497
 const isPowerOf2 = (value: number) => (value & (value - 1)) == 0
 const floorPowerOfTwo = (value: number) =>
   2 ** Math.floor(Math.log(value) / Math.LN2)
-const textureNeedsGenerateMipmaps = (
-  texture: Texture,
-  isPowerOfTwo: boolean,
-) =>
+const textureNeedsGenerateMipmaps = (texture: Texture, isPowerOfTwo: boolean) =>
   isPowerOfTwo &&
   texture.minFilter !== NearestFilter &&
   texture.minFilter !== LinearFilter
@@ -27,10 +24,7 @@ const textureNeedsPowerOfTwo = (texture: Texture) => {
     texture.wrapT !== ClampToEdgeWrapping
   )
     return true
-  if (
-    texture.minFilter !== NearestFilter &&
-    texture.minFilter !== LinearFilter
-  )
+  if (texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter)
     return true
   return false
 }
@@ -244,16 +238,8 @@ export class Texture {
     if (isVideo) {
       const video = this.setupVideo(url)
 
-      gl.texParameteri(
-        gl.TEXTURE_2D,
-        gl.TEXTURE_WRAP_S,
-        gl.CLAMP_TO_EDGE,
-      )
-      gl.texParameteri(
-        gl.TEXTURE_2D,
-        gl.TEXTURE_WRAP_T,
-        gl.CLAMP_TO_EDGE,
-      )
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
 
       this._webglTexture = texture
@@ -279,8 +265,7 @@ export class Texture {
 
     let image = (await loadImage()) as HTMLImageElement
 
-    let isPowerOfTwoImage =
-      isPowerOf2(image.width) && isPowerOf2(image.height)
+    let isPowerOfTwoImage = isPowerOf2(image.width) && isPowerOf2(image.height)
 
     if (textureNeedsPowerOfTwo(textureArgs) && !isPowerOfTwoImage) {
       image = this.makePowerOfTwo(image)
