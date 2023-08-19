@@ -68,7 +68,7 @@ You can install `react-shaders` with `npm`, `pnpm`, or `yarn`, and you can build
 <table>
 <tr>
 <th width="292px"><code>npm</code></th>
-<th width="292px"><code>pnpm</code></th>
+<th width="293px"><code>pnpm</code></th>
 <th width="292px"><code>yarn</code></th>
 </tr>
 <tr>
@@ -305,7 +305,6 @@ Example of shader you could write using these custom uniforms:
 You can pass an array of texture objects. A callback is available and called once all the textures are done loading. Each texture gets a uniform name `iChannel{n}` following the same order that in the prop passed to the react component, you can then directly use `iChannel{n}` in your shader.
 
 ```jsx
-import React from 'react'
 import { LinearFilter, RepeatWrapping, Shader } from 'react-shaders'
 
 const Example = () => (
@@ -347,7 +346,6 @@ import {
 **Example of usage of optionnal texture filtering:**
 
 ```jsx
-import React from 'react'
 import { LinearFilter, RepeatWrapping, Shader } from 'react-shaders'
 
 const Example = () => (

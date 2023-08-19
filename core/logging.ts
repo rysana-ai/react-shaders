@@ -1,1 +1,1 @@
-export const RSLOG = (text: string) => `react-shaders: ${text}`
+export const log = (text: string) => `react-shaders: ${text}`

@@ -1,4 +1,4 @@
-import { RSLOG } from './logging'
+import { log } from './logging'
 
 export const NearestFilter = 9728
 export const LinearFilter = 9729
@@ -154,7 +154,7 @@ export class Texture {
 
       // eslint-disable-next-line
       console.warn(
-        RSLOG(
+        log(
           `Image is not power of two ${image.width} x ${image.height}. Resized to ${this.pow2canvas.width} x ${this.pow2canvas.height};`,
         ),
       )
@@ -182,7 +182,7 @@ export class Texture {
     if (!url) {
       return Promise.reject(
         new Error(
-          RSLOG(
+          log(
             'Missing url, please make sure to pass the url of your texture { url: ... }',
           ),
         ),
@@ -195,7 +195,7 @@ export class Texture {
     if (isImage === null && isVideo === null) {
       return Promise.reject(
         new Error(
-          RSLOG(
+          log(
             `Please upload a video or an image with a valid format (url: ${url})`,
           ),
         ),
@@ -257,7 +257,7 @@ export class Texture {
           resolve(image)
         }
         image.onerror = () => {
-          reject(new Error(RSLOG(`failed loading url: ${url}`)))
+          reject(new Error(log(`failed loading url: ${url}`)))
         }
         image.src = url ?? ''
       })

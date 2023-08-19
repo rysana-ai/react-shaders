@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-
-import { RSLOG } from './logging'
+import { log } from './logging'
 import {
   ClampToEdgeWrapping,
   LinearFilter,
@@ -37,24 +36,20 @@ export {
 export type { Vector2, Vector3, Vector4 }
 
 const PRECISIONS = ['lowp', 'mediump', 'highp']
-
 const FS_MAIN_SHADER = `\nvoid main(void){
     vec4 color = vec4(0.0,0.0,0.0,1.0);
     mainImage( color, gl_FragCoord.xy );
     gl_FragColor = color;
 }`
-
 const BASIC_FS = `void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = fragCoord/iResolution.xy;
     vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
     fragColor = vec4(col,1.0);
 }`
-
 const BASIC_VS = `attribute vec3 aVertexPosition;
 void main(void) {
     gl_Position = vec4(aVertexPosition, 1.0);
 }`
-
 const UNIFORM_TIME = 'iTime'
 const UNIFORM_TIMEDELTA = 'iTimeDelta'
 const UNIFORM_DATE = 'iDate'
@@ -73,12 +68,7 @@ type TexturePropsType = {
   magFilter?: number
   flipY?: number
 }
-
-type Uniform = {
-  type: string
-  value: number[] | number
-}
-
+type Uniform = { type: string; value: number[] | number }
 export type Uniforms = Record<string, Uniform>
 
 type Props = {
@@ -149,11 +139,7 @@ type Props = {
   /** Custom callback to handle warnings. Defaults to `console.warn`. */
   onWarning?: (warning: string) => void
 }
-
-type Shaders = {
-  fs: string
-  vs: string
-}
+type Shaders = { fs: string; vs: string }
 
 const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
   return [
@@ -340,7 +326,6 @@ export class Shader extends Component<Props, unknown> {
       this.canvas.addEventListener('mouseout', this.mouseUp, options)
       this.canvas.addEventListener('mouseup', this.mouseUp, options)
       this.canvas.addEventListener('mousedown', this.mouseDown, options)
-
       this.canvas.addEventListener('touchmove', this.mouseMove, options)
       this.canvas.addEventListener('touchend', this.mouseUp, options)
       this.canvas.addEventListener('touchstart', this.mouseDown, options)
@@ -367,7 +352,6 @@ export class Shader extends Component<Props, unknown> {
       this.canvas.removeEventListener('mouseout', this.mouseUp, options)
       this.canvas.removeEventListener('mouseup', this.mouseUp, options)
       this.canvas.removeEventListener('mousedown', this.mouseDown, options)
-
       this.canvas.removeEventListener('touchmove', this.mouseMove, options)
       this.canvas.removeEventListener('touchend', this.mouseUp, options)
       this.canvas.removeEventListener('touchstart', this.mouseDown, options)
@@ -529,48 +513,36 @@ export class Shader extends Component<Props, unknown> {
 
   createShader = (type: number, shaderCodeAsText: string) => {
     const { gl } = this
-
     if (!gl) return null
-
     const shader = gl.createShader(type)
-
     if (!shader) return null
-
     gl.shaderSource(shader, shaderCodeAsText)
     gl.compileShader(shader)
-
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       this.props.onWarning?.(
-        RSLOG(`Error compiling the shader:\n${shaderCodeAsText}`),
+        log(`Error compiling the shader:\n${shaderCodeAsText}`),
       )
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
-      this.props.onError?.(RSLOG(`Shader compiler log: ${compilationLog}`))
+      this.props.onError?.(log(`Shader compiler log: ${compilationLog}`))
     }
-
     return shader
   }
 
   initShaders = ({ fs, vs }: Shaders) => {
     const { gl } = this
-
     if (!gl) return
-
     // console.log(fs, vs);
     const fragmentShader = this.createShader(gl.FRAGMENT_SHADER, fs)
     const vertexShader = this.createShader(gl.VERTEX_SHADER, vs)
-
     this.shaderProgram = gl.createProgram()
-
     if (!this.shaderProgram || !vertexShader || !fragmentShader) return
-
     gl.attachShader(this.shaderProgram, vertexShader)
     gl.attachShader(this.shaderProgram, fragmentShader)
     gl.linkProgram(this.shaderProgram)
-
     if (!gl.getProgramParameter(this.shaderProgram, gl.LINK_STATUS)) {
       this.props.onError?.(
-        RSLOG(
+        log(
           `Unable to initialize the shader program: ${gl.getProgramInfoLog(
             this.shaderProgram,
           )}`,
@@ -578,9 +550,7 @@ export class Shader extends Component<Props, unknown> {
       )
       return
     }
-
     gl.useProgram(this.shaderProgram)
-
     this.vertexPositionAttribute = gl.getAttribLocation(
       this.shaderProgram,
       'aVertexPosition',
@@ -595,14 +565,11 @@ export class Shader extends Component<Props, unknown> {
         const uniform = this.props.uniforms?.[name]
         if (!uniform) return
         const { value, type } = uniform
-
         const glslType = uniformTypeToGLSLType(type)
         if (!glslType) return
-
         function isMatrixType(t: string, v: number[] | number): v is number[] {
           return t.includes('Matrix') && Array.isArray(v)
         }
-
         function isVectorListType(
           t: string,
           v: number[] | number,
@@ -613,7 +580,6 @@ export class Shader extends Component<Props, unknown> {
             v.length > parseInt(t.charAt(0))
           )
         }
-
         const tempObject: {
           arraySize?: string
         } = {}
@@ -630,7 +596,6 @@ export class Shader extends Component<Props, unknown> {
             value.length / parseInt(type.charAt(0)),
           )}]`
         }
-
         this.uniforms[name] = {
           type: glslType,
           isNeeded: false,
@@ -644,9 +609,7 @@ export class Shader extends Component<Props, unknown> {
   processTextures = () => {
     const { gl } = this
     const { textures, onDoneLoadingTextures } = this.props
-
     if (!gl) return
-
     if (textures && textures.length > 0) {
       this.uniforms[`${UNIFORM_CHANNELRESOLUTION}`] = {
         type: 'vec3',
@@ -654,7 +617,6 @@ export class Shader extends Component<Props, unknown> {
         arraySize: `[${textures.length}]`,
         value: [],
       }
-
       const texturePromisesArr = textures.map(
         (texture: TexturePropsType, id: number) => {
           // Dynamically add textures uniforms.
@@ -662,7 +624,6 @@ export class Shader extends Component<Props, unknown> {
             type: 'sampler2D',
             isNeeded: false,
           }
-
           // Initialize array with 0s:
           // @ts-expect-error TODO: Deal with this.
           this.setupChannelRes(texture, id)
@@ -677,7 +638,6 @@ export class Shader extends Component<Props, unknown> {
           )
         },
       )
-
       Promise.all(texturePromisesArr)
         .then(() => {
           if (onDoneLoadingTextures) onDoneLoadingTextures()
@@ -693,7 +653,6 @@ export class Shader extends Component<Props, unknown> {
 
   preProcessShaders = (fs: string, vs: string) => {
     const { precision, devicePixelRatio = 1 } = this.props
-
     const dprString = `#define DPR ${devicePixelRatio.toFixed(1)}\n`
     const isValidPrecision = PRECISIONS.includes(precision ?? 'highp')
     const precisionString = `precision ${
@@ -701,18 +660,15 @@ export class Shader extends Component<Props, unknown> {
     } float;\n`
     if (!isValidPrecision)
       this.props.onWarning?.(
-        RSLOG(
+        log(
           `wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`,
         ),
       )
-
     let fsString = precisionString
       .concat(dprString)
       .concat(fs)
       .replace(/texture\(/g, 'texture2D(')
-
     const indexOfPrecisionString = fsString.lastIndexOf(precisionString)
-
     Object.keys(this.uniforms).forEach((uniform: string) => {
       if (fs.includes(uniform)) {
         const u = this.uniforms[uniform]
@@ -725,10 +681,8 @@ export class Shader extends Component<Props, unknown> {
         u.isNeeded = true
       }
     })
-
     const isShadertoy = fs.includes('mainImage')
     if (isShadertoy) fsString = fsString.concat(FS_MAIN_SHADER)
-
     // console.log(fsString);
     return {
       fs: fsString,
@@ -738,12 +692,9 @@ export class Shader extends Component<Props, unknown> {
 
   setUniforms = (timestamp: number) => {
     const { gl } = this
-
     if (!gl || !this.shaderProgram) return
-
     const delta = this.lastTime ? (timestamp - this.lastTime) / 1000 : 0
     this.lastTime = timestamp
-
     if (this.props.uniforms) {
       Object.keys(this.props.uniforms).forEach((name) => {
         const currentUniform = this.props.uniforms?.[name]
@@ -764,7 +715,6 @@ export class Shader extends Component<Props, unknown> {
         }
       })
     }
-
     if (this.uniforms.iMouse?.isNeeded) {
       const mouseUniform = gl.getUniformLocation(
         this.shaderProgram,
@@ -772,7 +722,6 @@ export class Shader extends Component<Props, unknown> {
       )
       gl.uniform4fv(mouseUniform, this.uniforms.iMouse.value as number[])
     }
-
     if (
       this.uniforms.iChannelResolution &&
       this.uniforms.iChannelResolution.isNeeded
@@ -786,7 +735,6 @@ export class Shader extends Component<Props, unknown> {
         this.uniforms.iChannelResolution.value as number[],
       )
     }
-
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
       const deviceOrientationUniform = gl.getUniformLocation(
         this.shaderProgram,
@@ -797,7 +745,6 @@ export class Shader extends Component<Props, unknown> {
         this.uniforms.iDeviceOrientation.value as number[],
       )
     }
-
     if (this.uniforms.iTime?.isNeeded) {
       const timeUniform = gl.getUniformLocation(
         this.shaderProgram,
@@ -805,7 +752,6 @@ export class Shader extends Component<Props, unknown> {
       )
       gl.uniform1f(timeUniform, (this.timer += delta))
     }
-
     if (this.uniforms.iTimeDelta?.isNeeded) {
       const timeDeltaUniform = gl.getUniformLocation(
         this.shaderProgram,
@@ -813,7 +759,6 @@ export class Shader extends Component<Props, unknown> {
       )
       gl.uniform1f(timeDeltaUniform, delta)
     }
-
     if (this.uniforms.iDate?.isNeeded) {
       const d = new Date()
       const month = d.getMonth() + 1
@@ -824,15 +769,12 @@ export class Shader extends Component<Props, unknown> {
         d.getMinutes() * 60 +
         d.getSeconds() +
         d.getMilliseconds() * 0.001
-
       const dateUniform = gl.getUniformLocation(
         this.shaderProgram,
         UNIFORM_DATE,
       )
-
       gl.uniform4fv(dateUniform, [year, month, day, time])
     }
-
     if (this.uniforms.iFrame?.isNeeded) {
       const timeDeltaUniform = gl.getUniformLocation(
         this.shaderProgram,
@@ -840,7 +782,6 @@ export class Shader extends Component<Props, unknown> {
       )
       gl.uniform1i(timeDeltaUniform, (this.uniforms.iFrame.value as number)++)
     }
-
     if (this.texturesArr.length > 0) {
       // @ts-expect-error TODO: Deal with this.
       this.texturesArr.forEach((texture: Texture, id: number) => {
@@ -898,7 +839,6 @@ export class Shader extends Component<Props, unknown> {
 
   render = () => {
     const { style } = this.props
-
     const currentStyle = {
       glCanvas: {
         height: '100%',

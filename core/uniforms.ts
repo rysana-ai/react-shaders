@@ -1,4 +1,4 @@
-import { RSLOG } from './logging'
+import { log } from './logging'
 
 export type Vector2 = [number, number]
 export type Vector3 = [number, number, number]
@@ -176,7 +176,7 @@ export const uniformTypeToGLSLType = (t: string) => {
       return 'mat4'
     default:
       console.error(
-        RSLOG(
+        log(
           `The uniform type "${t}" is not valid, please make sure your uniform type is valid`,
         ),
       )
