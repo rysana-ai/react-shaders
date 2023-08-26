@@ -53,82 +53,101 @@ export const processUniform = <T extends UniformType>(
   value: Uniforms[T],
 ) => {
   switch (t) {
-    case '1f':
+    case '1f': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform1f(location, value)
       break
-    case '2f':
+    }
+    case '2f': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform2f(location, value[0], value[1])
       break
-    case '3f':
+    }
+    case '3f': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform3f(location, value[0], value[1], value[2])
       break
-    case '4f':
+    }
+    case '4f': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform4f(location, value[0], value[1], value[2], value[3])
       break
-    case '1i':
+    }
+    case '1i': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform1i(location, value)
       break
-    case '2i':
+    }
+    case '2i': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform2i(location, value[0], value[1])
       break
-    case '3i':
+    }
+    case '3i': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform3i(location, value[0], value[1], value[2])
       break
-    case '4i':
+    }
+    case '4i': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform3i(location, value[0], value[1], value[2], value[3])
       break
-    case '1iv':
+    }
+    case '1iv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform1iv(location, value)
       break
-    case '2iv':
+    }
+    case '2iv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform2iv(location, value)
       break
-    case '3iv':
+    }
+    case '3iv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform3iv(location, value)
       break
-    case '4iv':
+    }
+    case '4iv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform4iv(location, value)
       break
-    case '1fv':
+    }
+    case '1fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform1fv(location, value)
       break
-    case '2fv':
+    }
+    case '2fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform2fv(location, value)
       break
-    case '3fv':
+    }
+    case '3fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform3fv(location, value)
       break
-    case '4fv':
+    }
+    case '4fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniform4fv(location, value)
       break
-    case 'Matrix2fv':
+    }
+    case 'Matrix2fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniformMatrix2fv(location, false, value)
       break
-    case 'Matrix3fv':
+    }
+    case 'Matrix3fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniformMatrix3fv(location, false, value)
       break
-    case 'Matrix4fv':
+    }
+    case 'Matrix4fv': {
       // @ts-expect-error TODO: Recognize type from generic.
       gl.uniformMatrix4fv(location, false, value)
       break
+    }
     default:
       break
   }
