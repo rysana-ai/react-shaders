@@ -146,7 +146,7 @@ const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
     // @ts-expect-error TODO: Deal with this.
     e.clientX || e.changedTouches[0].clientX,
     // @ts-expect-error TODO: Deal with this.
-    (clientY = e.clientY || e.changedTouches[0].clientY),
+    e.clientY || e.changedTouches[0].clientY,
   ]
 }
 
@@ -677,7 +677,7 @@ export class Shader extends Component<Props, unknown> {
       const mouseUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_MOUSE)
       gl.uniform4fv(mouseUniform, this.uniforms.iMouse.value as number[])
     }
-    if (this.uniforms.iChannelResolution && this.uniforms.iChannelResolution.isNeeded) {
+    if (this.uniforms.iChannelResolution?.isNeeded) {
       const channelResUniform = gl.getUniformLocation(
         this.shaderProgram,
         UNIFORM_CHANNELRESOLUTION,
