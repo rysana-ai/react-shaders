@@ -3,18 +3,18 @@ import { log } from './logging'
 export type Vector2 = [number, number]
 export type Vector3 = [number, number, number]
 export type Vector4 = [number, number, number, number]
-// prettier-ignore
+// rome-ignore format:
 export type Matrix2 = [
   number, number,
   number, number,
 ]
-// prettier-ignore
+// rome-ignore format:
 export type Matrix3 = [
   number, number, number,
   number, number, number,
   number, number, number,
 ]
-// prettier-ignore
+// rome-ignore format:
 export type Matrix4 = [
   number, number, number, number,
   number, number, number, number,

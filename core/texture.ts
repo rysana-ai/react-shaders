@@ -10,7 +10,6 @@ export const ClampToEdgeWrapping = 33071
 export const MirroredRepeatWrapping = 33648
 export const RepeatWrapping = 10497
 
-// eslint-disable-next-line eqeqeq
 const isPowerOf2 = (value: number) => (value & (value - 1)) == 0
 const floorPowerOfTwo = (value: number) =>
   2 ** Math.floor(Math.log(value) / Math.LN2)
@@ -152,7 +151,6 @@ export class Texture {
         this.pow2canvas.height,
       )
 
-      // eslint-disable-next-line
       console.warn(
         log(
           `Image is not power of two ${image.width} x ${image.height}. Resized to ${this.pow2canvas.width} x ${this.pow2canvas.height};`,
