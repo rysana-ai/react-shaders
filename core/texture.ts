@@ -11,17 +11,13 @@ export const MirroredRepeatWrapping = 33648
 export const RepeatWrapping = 10497
 
 const isPowerOf2 = (value: number) => (value & (value - 1)) == 0
-const floorPowerOfTwo = (value: number) =>
-  2 ** Math.floor(Math.log(value) / Math.LN2)
+const floorPowerOfTwo = (value: number) => 2 ** Math.floor(Math.log(value) / Math.LN2)
 const textureNeedsGenerateMipmaps = (texture: Texture, isPowerOfTwo: boolean) =>
   isPowerOfTwo &&
   texture.minFilter !== NearestFilter &&
   texture.minFilter !== LinearFilter
 const textureNeedsPowerOfTwo = (texture: Texture) => {
-  if (
-    texture.wrapS !== ClampToEdgeWrapping ||
-    texture.wrapT !== ClampToEdgeWrapping
-  )
+  if (texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping)
     return true
   if (texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter)
     return true
@@ -61,11 +57,7 @@ export class Texture {
     this.gl = gl
   }
 
-  updateTexture = (
-    texture: WebGLTexture,
-    video: HTMLVideoElement,
-    flipY: boolean,
-  ) => {
+  updateTexture = (texture: WebGLTexture, video: HTMLVideoElement, flipY: boolean) => {
     const { gl } = this
     const level = 0
     const internalFormat = gl.RGBA
@@ -73,14 +65,7 @@ export class Texture {
     const srcType = gl.UNSIGNED_BYTE
     gl.bindTexture(gl.TEXTURE_2D, texture)
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY)
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      level,
-      internalFormat,
-      srcFormat,
-      srcType,
-      video,
-    )
+    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, video)
   }
 
   setupVideo = (url: string) => {
@@ -126,9 +111,7 @@ export class Texture {
     return video
   }
 
-  makePowerOfTwo = <
-    T extends HTMLCanvasElement | HTMLImageElement | ImageBitmap,
-  >(
+  makePowerOfTwo = <T extends HTMLCanvasElement | HTMLImageElement | ImageBitmap,>(
     image: T,
   ): T => {
     if (
@@ -143,13 +126,7 @@ export class Texture {
       this.pow2canvas.height = floorPowerOfTwo(image.height)
 
       const context = this.pow2canvas.getContext('2d')
-      context?.drawImage(
-        image,
-        0,
-        0,
-        this.pow2canvas.width,
-        this.pow2canvas.height,
-      )
+      context?.drawImage(image, 0, 0, this.pow2canvas.width, this.pow2canvas.height)
 
       console.warn(
         log(
@@ -168,14 +145,7 @@ export class Texture {
   ) => {
     const { gl } = this
 
-    const {
-      url,
-      wrapS,
-      wrapT,
-      minFilter,
-      magFilter,
-      flipY = -1,
-    }: Texture = textureArgs
+    const { url, wrapS, wrapT, minFilter, magFilter, flipY = -1 }: Texture = textureArgs
 
     if (!url) {
       return Promise.reject(
@@ -193,9 +163,7 @@ export class Texture {
     if (isImage === null && isVideo === null) {
       return Promise.reject(
         new Error(
-          log(
-            `Please upload a video or an image with a valid format (url: ${url})`,
-          ),
+          log(`Please upload a video or an image with a valid format (url: ${url})`),
         ),
       )
     }
@@ -272,39 +240,20 @@ export class Texture {
 
     gl.bindTexture(gl.TEXTURE_2D, texture)
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, flipY)
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      level,
-      internalFormat,
-      srcFormat,
-      srcType,
-      image,
-    )
+    gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image)
 
     if (textureNeedsGenerateMipmaps(textureArgs, isPowerOfTwoImage)) {
       gl.generateMipmap(gl.TEXTURE_2D)
     }
 
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_WRAP_S,
-      this.wrapS || RepeatWrapping,
-    )
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_WRAP_T,
-      this.wrapT || RepeatWrapping,
-    )
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.wrapS || RepeatWrapping)
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.wrapT || RepeatWrapping)
     gl.texParameteri(
       gl.TEXTURE_2D,
       gl.TEXTURE_MIN_FILTER,
       this.minFilter || LinearMipMapLinearFilter,
     )
-    gl.texParameteri(
-      gl.TEXTURE_2D,
-      gl.TEXTURE_MAG_FILTER,
-      this.magFilter || LinearFilter,
-    )
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.magFilter || LinearFilter)
 
     this._webglTexture = texture
     this.source = image

@@ -151,11 +151,7 @@ const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
 }
 
 const lerpVal = (v0: number, v1: number, t: number) => v0 * (1 - t) + v1 * t
-const insertStringAtIndex = (
-  currentString: string,
-  string: string,
-  index: number,
-) =>
+const insertStringAtIndex = (currentString: string, string: string, index: number) =>
   index > 0
     ? currentString.substring(0, index) +
       string +
@@ -283,8 +279,7 @@ export class Shader extends Component<Props, unknown> {
     // @ts-expect-error TODO: Deal with this.
     this.uniforms.iChannelResolution.value[id * 3] = width * devicePixelRatio
     // @ts-expect-error TODO: Deal with this.
-    this.uniforms.iChannelResolution.value[id * 3 + 1] =
-      height * devicePixelRatio
+    this.uniforms.iChannelResolution.value[id * 3 + 1] = height * devicePixelRatio
     // @ts-expect-error TODO: Deal with this.
     this.uniforms.iChannelResolution.value[id * 3 + 2] = 0
     // console.log(this.uniforms);
@@ -309,9 +304,7 @@ export class Shader extends Component<Props, unknown> {
 
     gl?.bindBuffer(gl.ARRAY_BUFFER, this.squareVerticesBuffer ?? null)
 
-    const vertices = [
-      1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0,
-    ]
+    const vertices = [1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0]
 
     gl?.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
   }
@@ -368,11 +361,7 @@ export class Shader extends Component<Props, unknown> {
     window.removeEventListener('resize', this.onResize, options)
   }
 
-  onDeviceOrientationChange = ({
-    alpha,
-    beta,
-    gamma,
-  }: DeviceOrientationEvent) => {
+  onDeviceOrientationChange = ({ alpha, beta, gamma }: DeviceOrientationEvent) => {
     // @ts-expect-error TODO: Deal with this.
     this.uniforms.iDeviceOrientation.value = [
       alpha ?? 0,
@@ -385,8 +374,7 @@ export class Shader extends Component<Props, unknown> {
   mouseDown = (e: MouseEvent | TouchEvent) => {
     const [clientX, clientY] = latestPointerClientCoords(e)
 
-    const mouseX =
-      clientX - (this.canvasPosition?.left ?? 0) - window.pageXOffset
+    const mouseX = clientX - (this.canvasPosition?.left ?? 0) - window.pageXOffset
     const mouseY =
       (this.canvasPosition?.height ?? 0) -
       clientY -
@@ -412,9 +400,7 @@ export class Shader extends Component<Props, unknown> {
 
     const mouseX = clientX - (this.canvasPosition?.left ?? 0)
     const mouseY =
-      (this.canvasPosition?.height ?? 0) -
-      clientY -
-      (this.canvasPosition?.top ?? 0)
+      (this.canvasPosition?.height ?? 0) - clientY - (this.canvasPosition?.top ?? 0)
 
     if (lerp !== 1) {
       this.lastMouseArr[0] = mouseX
@@ -445,22 +431,15 @@ export class Shader extends Component<Props, unknown> {
     // Force pixel ratio to be one to avoid expensive calculus on retina display.
     const realToCSSPixels = devicePixelRatio
 
-    const displayWidth = Math.floor(
-      (this.canvasPosition?.width ?? 1) * realToCSSPixels,
-    )
+    const displayWidth = Math.floor((this.canvasPosition?.width ?? 1) * realToCSSPixels)
 
-    const displayHeight = Math.floor(
-      (this.canvasPosition?.height ?? 1) * realToCSSPixels,
-    )
+    const displayHeight = Math.floor((this.canvasPosition?.height ?? 1) * realToCSSPixels)
 
     gl.canvas.width = displayWidth
     gl.canvas.height = displayHeight
 
     if (this.uniforms.iResolution?.isNeeded && this.shaderProgram) {
-      const rUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_RESOLUTION,
-      )
+      const rUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_RESOLUTION)
       gl.uniform2fv(rUniform, [gl.canvas.width, gl.canvas.height])
     }
   }
@@ -476,14 +455,7 @@ export class Shader extends Component<Props, unknown> {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.squareVerticesBuffer ?? null)
-    gl.vertexAttribPointer(
-      this.vertexPositionAttribute ?? 0,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0,
-    )
+    gl.vertexAttribPointer(this.vertexPositionAttribute ?? 0, 3, gl.FLOAT, false, 0, 0)
 
     this.setUniforms(timestamp)
 
@@ -519,9 +491,7 @@ export class Shader extends Component<Props, unknown> {
     gl.shaderSource(shader, shaderCodeAsText)
     gl.compileShader(shader)
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      this.props.onWarning?.(
-        log(`Error compiling the shader:\n${shaderCodeAsText}`),
-      )
+      this.props.onWarning?.(log(`Error compiling the shader:\n${shaderCodeAsText}`))
       const compilationLog = gl.getShaderInfoLog(shader)
       gl.deleteShader(shader)
       this.props.onError?.(log(`Shader compiler log: ${compilationLog}`))
@@ -570,15 +540,8 @@ export class Shader extends Component<Props, unknown> {
         function isMatrixType(t: string, v: number[] | number): v is number[] {
           return t.includes('Matrix') && Array.isArray(v)
         }
-        function isVectorListType(
-          t: string,
-          v: number[] | number,
-        ): v is number[] {
-          return (
-            t.includes('v') &&
-            Array.isArray(v) &&
-            v.length > parseInt(t.charAt(0))
-          )
+        function isVectorListType(t: string, v: number[] | number): v is number[] {
+          return t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
         }
         const tempObject: {
           arraySize?: string
@@ -617,27 +580,25 @@ export class Shader extends Component<Props, unknown> {
         arraySize: `[${textures.length}]`,
         value: [],
       }
-      const texturePromisesArr = textures.map(
-        (texture: TexturePropsType, id: number) => {
-          // Dynamically add textures uniforms.
-          this.uniforms[`${UNIFORM_CHANNEL}${id}`] = {
-            type: 'sampler2D',
-            isNeeded: false,
-          }
-          // Initialize array with 0s:
-          // @ts-expect-error TODO: Deal with this.
-          this.setupChannelRes(texture, id)
-          this.texturesArr[id] = new Texture(gl)
-          return (
-            this.texturesArr[id]
-              // @ts-expect-error TODO: Deal with this.
-              ?.load(texture, id)
-              .then((t: Texture) => {
-                this.setupChannelRes(t, id)
-              })
-          )
-        },
-      )
+      const texturePromisesArr = textures.map((texture: TexturePropsType, id: number) => {
+        // Dynamically add textures uniforms.
+        this.uniforms[`${UNIFORM_CHANNEL}${id}`] = {
+          type: 'sampler2D',
+          isNeeded: false,
+        }
+        // Initialize array with 0s:
+        // @ts-expect-error TODO: Deal with this.
+        this.setupChannelRes(texture, id)
+        this.texturesArr[id] = new Texture(gl)
+        return (
+          this.texturesArr[id]
+            // @ts-expect-error TODO: Deal with this.
+            ?.load(texture, id)
+            .then((t: Texture) => {
+              this.setupChannelRes(t, id)
+            })
+        )
+      })
       Promise.all(texturePromisesArr)
         .then(() => {
           if (onDoneLoadingTextures) onDoneLoadingTextures()
@@ -701,10 +662,7 @@ export class Shader extends Component<Props, unknown> {
         if (!currentUniform) return
         if (this.uniforms[name]?.isNeeded) {
           if (!this.shaderProgram) return
-          const customUniformLocation = gl.getUniformLocation(
-            this.shaderProgram,
-            name,
-          )
+          const customUniformLocation = gl.getUniformLocation(this.shaderProgram, name)
           if (!customUniformLocation) return
           processUniform(
             gl,
@@ -716,24 +674,15 @@ export class Shader extends Component<Props, unknown> {
       })
     }
     if (this.uniforms.iMouse?.isNeeded) {
-      const mouseUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_MOUSE,
-      )
+      const mouseUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_MOUSE)
       gl.uniform4fv(mouseUniform, this.uniforms.iMouse.value as number[])
     }
-    if (
-      this.uniforms.iChannelResolution &&
-      this.uniforms.iChannelResolution.isNeeded
-    ) {
+    if (this.uniforms.iChannelResolution && this.uniforms.iChannelResolution.isNeeded) {
       const channelResUniform = gl.getUniformLocation(
         this.shaderProgram,
         UNIFORM_CHANNELRESOLUTION,
       )
-      gl.uniform3fv(
-        channelResUniform,
-        this.uniforms.iChannelResolution.value as number[],
-      )
+      gl.uniform3fv(channelResUniform, this.uniforms.iChannelResolution.value as number[])
     }
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
       const deviceOrientationUniform = gl.getUniformLocation(
@@ -746,10 +695,7 @@ export class Shader extends Component<Props, unknown> {
       )
     }
     if (this.uniforms.iTime?.isNeeded) {
-      const timeUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_TIME,
-      )
+      const timeUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_TIME)
       gl.uniform1f(timeUniform, (this.timer += delta))
     }
     if (this.uniforms.iTimeDelta?.isNeeded) {
@@ -769,17 +715,11 @@ export class Shader extends Component<Props, unknown> {
         d.getMinutes() * 60 +
         d.getSeconds() +
         d.getMilliseconds() * 0.001
-      const dateUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_DATE,
-      )
+      const dateUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_DATE)
       gl.uniform4fv(dateUniform, [year, month, day, time])
     }
     if (this.uniforms.iFrame?.isNeeded) {
-      const timeDeltaUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_FRAME,
-      )
+      const timeDeltaUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_FRAME)
       gl.uniform1i(timeDeltaUniform, (this.uniforms.iFrame.value as number)++)
     }
     if (this.texturesArr.length > 0) {
@@ -789,10 +729,7 @@ export class Shader extends Component<Props, unknown> {
         if (!isLoaded) return
         if (this.uniforms[`iChannel${id}`]?.isNeeded) {
           if (!this.shaderProgram) return
-          const iChannel = gl.getUniformLocation(
-            this.shaderProgram,
-            `iChannel${id}`,
-          )
+          const iChannel = gl.getUniformLocation(this.shaderProgram, `iChannel${id}`)
           // @ts-expect-error TODO: Deal with this.
           gl.activeTexture(gl[`TEXTURE${id}`])
           gl.bindTexture(gl.TEXTURE_2D, _webglTexture)
