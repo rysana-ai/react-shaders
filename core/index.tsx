@@ -603,7 +603,7 @@ export class Shader extends Component<Props, unknown> {
         .then(() => {
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
-        .catch((e) => {
+        .catch(e => {
           this.props.onError?.(e)
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
@@ -657,7 +657,7 @@ export class Shader extends Component<Props, unknown> {
     const delta = this.lastTime ? (timestamp - this.lastTime) / 1000 : 0
     this.lastTime = timestamp
     if (this.props.uniforms) {
-      Object.keys(this.props.uniforms).forEach((name) => {
+      Object.keys(this.props.uniforms).forEach(name => {
         const currentUniform = this.props.uniforms?.[name]
         if (!currentUniform) return
         if (this.uniforms[name]?.isNeeded) {
