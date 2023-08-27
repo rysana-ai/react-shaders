@@ -325,11 +325,7 @@ export class Shader extends Component<Props, unknown> {
     }
 
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
-      window.addEventListener(
-        'deviceorientation',
-        this.onDeviceOrientationChange,
-        options,
-      )
+      window.addEventListener('deviceorientation', this.onDeviceOrientationChange, options)
     }
 
     window.addEventListener('resize', this.onResize, options)
@@ -351,11 +347,7 @@ export class Shader extends Component<Props, unknown> {
     }
 
     if (this.uniforms.iDeviceOrientation?.isNeeded) {
-      window.removeEventListener(
-        'deviceorientation',
-        this.onDeviceOrientationChange,
-        options,
-      )
+      window.removeEventListener('deviceorientation', this.onDeviceOrientationChange, options)
     }
 
     window.removeEventListener('resize', this.onResize, options)
@@ -521,10 +513,7 @@ export class Shader extends Component<Props, unknown> {
       return
     }
     gl.useProgram(this.shaderProgram)
-    this.vertexPositionAttribute = gl.getAttribLocation(
-      this.shaderProgram,
-      'aVertexPosition',
-    )
+    this.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram, 'aVertexPosition')
     gl.enableVertexAttribArray(this.vertexPositionAttribute)
   }
 
@@ -555,9 +544,7 @@ export class Shader extends Component<Props, unknown> {
             tempObject.arraySize = `[${numberOfMatrices}]`
           }
         } else if (isVectorListType(type, value)) {
-          tempObject.arraySize = `[${Math.floor(
-            value.length / parseInt(type.charAt(0)),
-          )}]`
+          tempObject.arraySize = `[${Math.floor(value.length / parseInt(type.charAt(0)))}]`
         }
         this.uniforms[name] = {
           type: glslType,
@@ -699,10 +686,7 @@ export class Shader extends Component<Props, unknown> {
       gl.uniform1f(timeUniform, (this.timer += delta))
     }
     if (this.uniforms.iTimeDelta?.isNeeded) {
-      const timeDeltaUniform = gl.getUniformLocation(
-        this.shaderProgram,
-        UNIFORM_TIMEDELTA,
-      )
+      const timeDeltaUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_TIMEDELTA)
       gl.uniform1f(timeDeltaUniform, delta)
     }
     if (this.uniforms.iDate?.isNeeded) {

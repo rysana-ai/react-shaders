@@ -13,14 +13,11 @@ export const RepeatWrapping = 10497
 const isPowerOf2 = (value: number) => (value & (value - 1)) == 0
 const floorPowerOfTwo = (value: number) => 2 ** Math.floor(Math.log(value) / Math.LN2)
 const textureNeedsGenerateMipmaps = (texture: Texture, isPowerOfTwo: boolean) =>
-  isPowerOfTwo &&
-  texture.minFilter !== NearestFilter &&
-  texture.minFilter !== LinearFilter
+  isPowerOfTwo && texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter
 const textureNeedsPowerOfTwo = (texture: Texture) => {
   if (texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping)
     return true
-  if (texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter)
-    return true
+  if (texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter) return true
   return false
 }
 
@@ -119,8 +116,7 @@ export class Texture {
       image instanceof HTMLCanvasElement ||
       image instanceof ImageBitmap
     ) {
-      if (this.pow2canvas === undefined)
-        this.pow2canvas = document.createElement('canvas')
+      if (this.pow2canvas === undefined) this.pow2canvas = document.createElement('canvas')
 
       this.pow2canvas.width = floorPowerOfTwo(image.width)
       this.pow2canvas.height = floorPowerOfTwo(image.height)
@@ -150,9 +146,7 @@ export class Texture {
     if (!url) {
       return Promise.reject(
         new Error(
-          log(
-            'Missing url, please make sure to pass the url of your texture { url: ... }',
-          ),
+          log('Missing url, please make sure to pass the url of your texture { url: ... }'),
         ),
       )
     }
@@ -162,9 +156,7 @@ export class Texture {
 
     if (isImage === null && isVideo === null) {
       return Promise.reject(
-        new Error(
-          log(`Please upload a video or an image with a valid format (url: ${url})`),
-        ),
+        new Error(log(`Please upload a video or an image with a valid format (url: ${url})`)),
       )
     }
 
