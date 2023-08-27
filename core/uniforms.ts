@@ -21,7 +21,6 @@ export type Matrix4 = [
   number, number, number, number,
   number, number, number, number,
 ]
-
 export type Uniforms = {
   '1i': number
   '2i': Vector2
@@ -43,7 +42,6 @@ export type Uniforms = {
   Matrix3fv: Float32List
   Matrix4fv: Float32List
 }
-
 export type UniformType = keyof Uniforms
 
 export const processUniform = <T extends UniformType>(
@@ -195,9 +193,7 @@ export const uniformTypeToGLSLType = (t: string) => {
       return 'mat4'
     default:
       console.error(
-        log(
-          `The uniform type "${t}" is not valid, please make sure your uniform type is valid`,
-        ),
+        log(`The uniform type "${t}" is not valid, please make sure your uniform type is valid`),
       )
   }
 }
