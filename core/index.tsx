@@ -1,3 +1,4 @@
+import React, { Component } from 'react'
 import { log } from './logging'
 import {
   ClampToEdgeWrapping,
@@ -19,7 +20,6 @@ import {
   processUniform,
   uniformTypeToGLSLType,
 } from './uniforms'
-import React, { Component } from 'react'
 
 export {
   NearestFilter,
