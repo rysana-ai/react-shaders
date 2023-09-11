@@ -194,6 +194,7 @@ export class Shader extends Component<Props, unknown> {
       this.processCustomUniforms()
       this.processTextures()
       const shaders = this.preProcessShaders(fs || BASIC_FS, vs || BASIC_VS)
+      // @ts-expect-error TODO: Deal with this.
       this.initShaders(shaders)
       this.initBuffers()
       // @ts-expect-error apparently this thing needs a timestamp but it's not used?
@@ -210,10 +211,10 @@ export class Shader extends Component<Props, unknown> {
       gl.useProgram(null)
       gl.deleteProgram(this.shaderProgram ?? null)
       if (this.texturesArr.length > 0) {
-        // @ts-expect-error TODO: Deal with this.
-        this.texturesArr.forEach((texture: Texture) => {
+        for (const texture of this.texturesArr) {
+          // @ts-expect-error TODO: Deal with this.
           gl.deleteTexture(texture._webglTexture)
-        })
+        }
       }
       this.shaderProgram = null
     }
@@ -414,7 +415,7 @@ export class Shader extends Component<Props, unknown> {
   processCustomUniforms = () => {
     const { uniforms } = this.props
     if (uniforms) {
-      Object.keys(uniforms).forEach((name: string) => {
+      for (const name of Object.keys(uniforms)) {
         const uniform = this.props.uniforms?.[name]
         if (!uniform) return
         const { value, type } = uniform
@@ -446,7 +447,7 @@ export class Shader extends Component<Props, unknown> {
           value,
           ...tempObject,
         }
-      })
+      }
     }
   }
   processTextures = () => {
@@ -504,7 +505,7 @@ export class Shader extends Component<Props, unknown> {
       )
     let fsString = precisionString.concat(dprString).concat(fs).replace(/texture\(/g, 'texture2D(')
     const indexOfPrecisionString = fsString.lastIndexOf(precisionString)
-    Object.keys(this.uniforms).forEach((uniform: string) => {
+    for (const uniform of Object.keys(this.uniforms)) {
       if (fs.includes(uniform)) {
         const u = this.uniforms[uniform]
         if (!u) return
@@ -515,7 +516,7 @@ export class Shader extends Component<Props, unknown> {
         )
         u.isNeeded = true
       }
-    })
+    }
     const isShadertoy = fs.includes('mainImage')
     if (isShadertoy) fsString = fsString.concat(FS_MAIN_SHADER)
     // console.log(fsString);
@@ -530,7 +531,7 @@ export class Shader extends Component<Props, unknown> {
     const delta = this.lastTime ? (timestamp - this.lastTime) / 1000 : 0
     this.lastTime = timestamp
     if (this.props.uniforms) {
-      Object.keys(this.props.uniforms).forEach(name => {
+      for (const name of Object.keys(this.props.uniforms)) {
         const currentUniform = this.props.uniforms?.[name]
         if (!currentUniform) return
         if (this.uniforms[name]?.isNeeded) {
@@ -544,7 +545,7 @@ export class Shader extends Component<Props, unknown> {
             currentUniform.value,
           )
         }
-      })
+      }
     }
     if (this.uniforms.iMouse?.isNeeded) {
       const mouseUniform = gl.getUniformLocation(this.shaderProgram, UNIFORM_MOUSE)
@@ -587,23 +588,25 @@ export class Shader extends Component<Props, unknown> {
       gl.uniform1i(timeDeltaUniform, (this.uniforms.iFrame.value as number)++)
     }
     if (this.texturesArr.length > 0) {
-      // @ts-expect-error TODO: Deal with this.
-      this.texturesArr.forEach((texture: Texture, id: number) => {
+      for (let index = 0; index < this.texturesArr.length; index++) {
+        const texture = this.texturesArr[index]
+        if (!texture) return
+        // @ts-expect-error TODO: Deal with this.
         const { isVideo, _webglTexture, source, flipY, isLoaded } = texture
         if (!isLoaded) return
-        if (this.uniforms[`iChannel${id}`]?.isNeeded) {
+        if (this.uniforms[`iChannel${index}`]?.isNeeded) {
           if (!this.shaderProgram) return
-          const iChannel = gl.getUniformLocation(this.shaderProgram, `iChannel${id}`)
+          const iChannel = gl.getUniformLocation(this.shaderProgram, `iChannel${index}`)
           // @ts-expect-error TODO: Deal with this.
-          gl.activeTexture(gl[`TEXTURE${id}`])
+          gl.activeTexture(gl[`TEXTURE${index}`])
           gl.bindTexture(gl.TEXTURE_2D, _webglTexture)
-          gl.uniform1i(iChannel, id)
+          gl.uniform1i(iChannel, index)
           if (isVideo) {
             // @ts-expect-error TODO: Deal with this.
             texture.updateTexture(_webglTexture, source, flipY)
           }
         }
-      })
+      }
     }
   }
   registerCanvas = (r: HTMLCanvasElement) => {
