@@ -10,7 +10,7 @@ export const ClampToEdgeWrapping = 33071
 export const MirroredRepeatWrapping = 33648
 export const RepeatWrapping = 10497
 
-const isPowerOf2 = (value: number) => (value & (value - 1)) == 0
+const isPowerOf2 = (value: number) => (value & (value - 1)) === 0
 const floorPowerOfTwo = (value: number) => 2 ** Math.floor(Math.log(value) / Math.LN2)
 const textureNeedsGenerateMipmaps = (texture: Texture, isPowerOfTwo: boolean) =>
   isPowerOfTwo && texture.minFilter !== NearestFilter && texture.minFilter !== LinearFilter
