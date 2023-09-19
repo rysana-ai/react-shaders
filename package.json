@@ -31,7 +31,7 @@
     "dev": "tsup --watch"
   },
   "devDependencies": {
-    "@types/react": "^18.2.21",
+    "@types/react": "^18.2.22",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2"
   },
