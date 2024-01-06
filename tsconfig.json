@@ -21,9 +21,7 @@
     "resolveJsonModule": true,
     "jsx": "preserve",
     "baseUrl": ".",
-    "paths": {
-      "~/*": ["*"]
-    }
+    "paths": { "~/*": ["*"] }
   },
   "include": ["."],
   "exclude": ["node_modules", "build", "dist"]

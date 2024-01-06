@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { CSSProperties, Component } from 'react'
 import { log } from './logging'
 import {
   ClampToEdgeWrapping,
@@ -17,19 +17,21 @@ import {
   Vector2,
   Vector3,
   Vector4,
+  isMatrixType,
+  isVectorListType,
   processUniform,
   uniformTypeToGLSLType,
 } from './uniforms'
 
 export {
-  NearestFilter,
-  LinearFilter,
-  NearestMipMapNearestFilter,
-  LinearMipMapNearestFilter,
-  NearestMipMapLinearFilter,
-  LinearMipMapLinearFilter,
   ClampToEdgeWrapping,
+  LinearFilter,
+  LinearMipMapLinearFilter,
+  LinearMipMapNearestFilter,
   MirroredRepeatWrapping,
+  NearestFilter,
+  NearestMipMapLinearFilter,
+  NearestMipMapNearestFilter,
   RepeatWrapping,
 }
 
@@ -60,7 +62,21 @@ const UNIFORM_CHANNEL = 'iChannel'
 const UNIFORM_CHANNELRESOLUTION = 'iChannelResolution'
 const UNIFORM_DEVICEORIENTATION = 'iDeviceOrientation'
 
-type TexturePropsType = {
+const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
+  // @ts-expect-error TODO: Deal with this.
+  return [e.clientX || e.changedTouches[0].clientX, e.clientY || e.changedTouches[0].clientY]
+}
+const lerpVal = (v0: number, v1: number, t: number) => v0 * (1 - t) + v1 * t
+const insertStringAtIndex = (currentString: string, string: string, index: number) =>
+  index > 0
+    ? currentString.substring(0, index) +
+      string +
+      currentString.substring(index, currentString.length)
+    : string + currentString
+
+type Uniform = { type: string; value: number[] | number }
+export type Uniforms = Record<string, Uniform>
+type TextureParams = {
   url: string
   wrapS?: number
   wrapT?: number
@@ -68,14 +84,14 @@ type TexturePropsType = {
   magFilter?: number
   flipY?: number
 }
-type Uniform = { type: string; value: number[] | number }
-export type Uniforms = Record<string, Uniform>
 
 type Props = {
   /** Fragment shader GLSL code. */
   fs: string
+
   /** Vertex shader GLSL code. */
   vs?: string
+
   /**
    * Textures to be passed to the shader. Textures need to be squared or will be
    * automatically resized.
@@ -94,7 +110,8 @@ type Props = {
    * See [textures in the docs](https://rysana.com/docs/react-shaders#textures)
    * for details.
    */
-  textures?: TexturePropsType[]
+  textures?: TextureParams[]
+
   /**
    * Custom uniforms to be passed to the shader.
    *
@@ -102,6 +119,7 @@ type Props = {
    * docs](https://rysana.com/docs/react-shaders#custom-uniforms) for details.
    */
   uniforms?: Uniforms
+
   /**
    * Color used when clearing the canvas.
    *
@@ -110,49 +128,37 @@ type Props = {
    * for details.
    */
   clearColor?: Vector4
+
   /**
    * GLSL precision qualifier. Defaults to `'highp'`. Balance between
    * performance and quality.
    */
   precision?: 'highp' | 'lowp' | 'mediump'
+
   /** Custom inline style for canvas. */
   style?: CSSStyleDeclaration
-  /**
-   * Customize WebGL context attributes.
-   *
-   * See [the WebGL
-   * docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getContextAttributes)
-   * for details.
-   */
+
+  /** Customize WebGL context attributes. See [the WebGL docs](https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/getContextAttributes) for details. */
   contextAttributes?: Record<string, unknown>
+
   /** Lerp value for `iMouse` built-in uniform. Must be between 0 and 1. */
   lerp?: number
+
   /** Device pixel ratio. */
   devicePixelRatio?: number
+
   /**
    * Callback for when the textures are done loading. Useful if you want to do
    * something like e.g. hide the canvas until textures are done loading.
    */
   onDoneLoadingTextures?: () => void
+
   /** Custom callback to handle errors. Defaults to `console.error`. */
   onError?: (error: string) => void
+
   /** Custom callback to handle warnings. Defaults to `console.warn`. */
   onWarning?: (warning: string) => void
 }
-type Shaders = { fs: string; vs: string }
-
-const latestPointerClientCoords = (e: MouseEvent | TouchEvent) => {
-  // @ts-expect-error TODO: Deal with this.
-  return [e.clientX || e.changedTouches[0].clientX, e.clientY || e.changedTouches[0].clientY]
-}
-const lerpVal = (v0: number, v1: number, t: number) => v0 * (1 - t) + v1 * t
-const insertStringAtIndex = (currentString: string, string: string, index: number) =>
-  index > 0
-    ? currentString.substring(0, index) +
-      string +
-      currentString.substring(index, currentString.length)
-    : string + currentString
-
 export class Shader extends Component<Props, unknown> {
   uniforms: Record<
     string,
@@ -193,9 +199,7 @@ export class Shader extends Component<Props, unknown> {
       this.canvas.width = this.canvas.clientWidth
       this.processCustomUniforms()
       this.processTextures()
-      const shaders = this.preProcessShaders(fs || BASIC_FS, vs || BASIC_VS)
-      // @ts-expect-error TODO: Deal with this.
-      this.initShaders(shaders)
+      this.initShaders(this.preProcessFragment(fs || BASIC_FS), vs || BASIC_VS)
       this.initBuffers()
       // @ts-expect-error apparently this thing needs a timestamp but it's not used?
       this.drawScene()
@@ -389,7 +393,7 @@ export class Shader extends Component<Props, unknown> {
     }
     return shader
   }
-  initShaders = ({ fs, vs }: Shaders) => {
+  initShaders = (fs: string, vs: string) => {
     const { gl } = this
     if (!gl) return
     // console.log(fs, vs);
@@ -421,32 +425,16 @@ export class Shader extends Component<Props, unknown> {
         const { value, type } = uniform
         const glslType = uniformTypeToGLSLType(type)
         if (!glslType) return
-        function isMatrixType(t: string, v: number[] | number): v is number[] {
-          return t.includes('Matrix') && Array.isArray(v)
-        }
-        function isVectorListType(t: string, v: number[] | number): v is number[] {
-          return t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
-        }
-        const tempObject: {
-          arraySize?: string
-        } = {}
+        const tempObject: { arraySize?: string } = {}
         if (isMatrixType(type, value)) {
           const arrayLength = type.length
           const val = parseInt(type.charAt(arrayLength - 3))
           const numberOfMatrices = Math.floor(value.length / (val * val))
-
-          if (value.length > val * val) {
-            tempObject.arraySize = `[${numberOfMatrices}]`
-          }
+          if (value.length > val * val) tempObject.arraySize = `[${numberOfMatrices}]`
         } else if (isVectorListType(type, value)) {
           tempObject.arraySize = `[${Math.floor(value.length / parseInt(type.charAt(0)))}]`
         }
-        this.uniforms[name] = {
-          type: glslType,
-          isNeeded: false,
-          value,
-          ...tempObject,
-        }
+        this.uniforms[name] = { type: glslType, isNeeded: false, value, ...tempObject }
       }
     }
   }
@@ -461,7 +449,7 @@ export class Shader extends Component<Props, unknown> {
         arraySize: `[${textures.length}]`,
         value: [],
       }
-      const texturePromisesArr = textures.map((texture: TexturePropsType, id: number) => {
+      const texturePromisesArr = textures.map((texture: TextureParams, id: number) => {
         // Dynamically add textures uniforms.
         this.uniforms[`${UNIFORM_CHANNEL}${id}`] = {
           type: 'sampler2D',
@@ -492,38 +480,35 @@ export class Shader extends Component<Props, unknown> {
       if (onDoneLoadingTextures) onDoneLoadingTextures()
     }
   }
-  preProcessShaders = (fs: string, vs: string) => {
+  preProcessFragment = (fragment: string) => {
     const { precision, devicePixelRatio = 1 } = this.props
-    const dprString = `#define DPR ${devicePixelRatio.toFixed(1)}\n`
     const isValidPrecision = PRECISIONS.includes(precision ?? 'highp')
     const precisionString = `precision ${isValidPrecision ? precision : PRECISIONS[1]} float;\n`
-    if (!isValidPrecision)
+    if (!isValidPrecision) {
       this.props.onWarning?.(
         log(
           `wrong precision type ${precision}, please make sure to pass one of a valid precision lowp, mediump, highp, by default you shader precision will be set to highp.`,
         ),
       )
-    let fsString = precisionString.concat(dprString).concat(fs).replace(/texture\(/g, 'texture2D(')
-    const indexOfPrecisionString = fsString.lastIndexOf(precisionString)
+    }
+    let fs = precisionString
+      .concat(`#define DPR ${devicePixelRatio.toFixed(1)}\n`)
+      .concat(fragment.replace(/texture\(/g, 'texture2D('))
     for (const uniform of Object.keys(this.uniforms)) {
-      if (fs.includes(uniform)) {
+      if (fragment.includes(uniform)) {
         const u = this.uniforms[uniform]
-        if (!u) return
-        fsString = insertStringAtIndex(
-          fsString,
+        if (!u) continue
+        fs = insertStringAtIndex(
+          fs,
           `uniform ${u.type} ${uniform}${u.arraySize || ''}; \n`,
-          indexOfPrecisionString + precisionString.length,
+          fs.lastIndexOf(precisionString) + precisionString.length,
         )
         u.isNeeded = true
       }
     }
-    const isShadertoy = fs.includes('mainImage')
-    if (isShadertoy) fsString = fsString.concat(FS_MAIN_SHADER)
-    // console.log(fsString);
-    return {
-      fs: fsString,
-      vs,
-    }
+    const isShadertoy = fragment.includes('mainImage')
+    if (isShadertoy) fs = fs.concat(FS_MAIN_SHADER)
+    return fs
   }
   setUniforms = (timestamp: number) => {
     const { gl } = this
@@ -589,21 +574,20 @@ export class Shader extends Component<Props, unknown> {
     }
     if (this.texturesArr.length > 0) {
       for (let index = 0; index < this.texturesArr.length; index++) {
-        const texture = this.texturesArr[index]
+        // TODO: Don't use this casting if possible:
+        const texture = this.texturesArr[index] as Texture | undefined
         if (!texture) return
-        // @ts-expect-error TODO: Deal with this.
         const { isVideo, _webglTexture, source, flipY, isLoaded } = texture
-        if (!isLoaded) return
+        if (!isLoaded || !_webglTexture || !source) return
         if (this.uniforms[`iChannel${index}`]?.isNeeded) {
           if (!this.shaderProgram) return
           const iChannel = gl.getUniformLocation(this.shaderProgram, `iChannel${index}`)
-          // @ts-expect-error TODO: Deal with this.
+          // @ts-expect-error TODO: Fix. Can't index WebGL context with this dynamic value.
           gl.activeTexture(gl[`TEXTURE${index}`])
           gl.bindTexture(gl.TEXTURE_2D, _webglTexture)
           gl.uniform1i(iChannel, index)
           if (isVideo) {
-            // @ts-expect-error TODO: Deal with this.
-            texture.updateTexture(_webglTexture, source, flipY)
+            texture.updateTexture(_webglTexture, source as HTMLVideoElement, flipY)
           }
         }
       }
@@ -617,8 +601,6 @@ export class Shader extends Component<Props, unknown> {
   shaderProgram?: WebGLProgram | null
   vertexPositionAttribute?: number
   animFrameId?: number
-  // Not sure if this is even used.
-  timeoutId?: number
   canvas?: HTMLCanvasElement
   mousedown = false
   canvasPosition?: DOMRect
@@ -626,19 +608,10 @@ export class Shader extends Component<Props, unknown> {
   lastMouseArr: number[] = [0, 0]
   texturesArr: WebGLTexture[] = []
   lastTime = 0
-
-  render = () => {
-    const { style } = this.props
-    const currentStyle = {
-      glCanvas: {
-        height: '100%',
-        width: '100%',
-        ...style,
-      },
-    }
-    return (
-      // @ts-expect-error TODO: Deal with this.
-      <canvas ref={this.registerCanvas} style={currentStyle.glCanvas} />
-    )
-  }
+  render = () => (
+    <canvas
+      ref={this.registerCanvas}
+      style={{ height: '100%', width: '100%', ...this.props.style } as CSSProperties}
+    />
+  )
 }

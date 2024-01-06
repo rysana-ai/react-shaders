@@ -1,26 +1,20 @@
 import { log } from './logging'
 
-export type Vector2 = [number, number]
-export type Vector3 = [number, number, number]
-export type Vector4 = [number, number, number, number]
+export type Vector2<T = number> = [T, T]
+export type Vector3<T = number> = [T, T, T]
+export type Vector4<T = number> = [T, T, T, T]
 // biome-ignore format:
-export type Matrix2 = [
-  number, number,
-  number, number,
-]
+export type Matrix2<T = number> = [T, T,
+                                   T, T]
 // biome-ignore format:
-export type Matrix3 = [
-  number, number, number,
-  number, number, number,
-  number, number, number,
-]
+export type Matrix3<T = number> = [T, T, T,
+                                   T, T, T,
+                                   T, T, T]
 // biome-ignore format:
-export type Matrix4 = [
-  number, number, number, number,
-  number, number, number, number,
-  number, number, number, number,
-  number, number, number, number,
-]
+export type Matrix4<T = number> = [T, T, T, T,
+                                   T, T, T, T,
+                                   T, T, T, T,
+                                   T, T, T, T]
 export type Uniforms = {
   '1i': number
   '2i': Vector2
@@ -44,110 +38,68 @@ export type Uniforms = {
 }
 export type UniformType = keyof Uniforms
 
+export function isMatrixType(t: string, v: number[] | number): v is number[] {
+  return t.includes('Matrix') && Array.isArray(v)
+}
+export function isVectorListType(t: string, v: number[] | number): v is number[] {
+  return t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
+}
+function isVectorType(t: string, v: number[] | number): v is Vector4 {
+  return !t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
+}
 export const processUniform = <T extends UniformType>(
   gl: WebGLRenderingContext,
   location: WebGLUniformLocation,
   t: T,
-  value: Uniforms[T],
+  value: number | number[],
 ) => {
+  if (isVectorType(t, value)) {
+    switch (t) {
+      case '2f':
+        return gl.uniform2f(location, value[0], value[1])
+      case '3f':
+        return gl.uniform3f(location, value[0], value[1], value[2])
+      case '4f':
+        return gl.uniform4f(location, value[0], value[1], value[2], value[3])
+      case '2i':
+        return gl.uniform2i(location, value[0], value[1])
+      case '3i':
+        return gl.uniform3i(location, value[0], value[1], value[2])
+      case '4i':
+        return gl.uniform4i(location, value[0], value[1], value[2], value[3])
+    }
+  }
+  if (typeof value === 'number') {
+    switch (t) {
+      case '1i':
+        return gl.uniform1i(location, value)
+      default:
+        return gl.uniform1f(location, value)
+    }
+  }
   switch (t) {
-    case '1f': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform1f(location, value)
-      break
-    }
-    case '2f': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform2f(location, value[0], value[1])
-      break
-    }
-    case '3f': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform3f(location, value[0], value[1], value[2])
-      break
-    }
-    case '4f': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform4f(location, value[0], value[1], value[2], value[3])
-      break
-    }
-    case '1i': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform1i(location, value)
-      break
-    }
-    case '2i': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform2i(location, value[0], value[1])
-      break
-    }
-    case '3i': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform3i(location, value[0], value[1], value[2])
-      break
-    }
-    case '4i': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform3i(location, value[0], value[1], value[2], value[3])
-      break
-    }
-    case '1iv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform1iv(location, value)
-      break
-    }
-    case '2iv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform2iv(location, value)
-      break
-    }
-    case '3iv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform3iv(location, value)
-      break
-    }
-    case '4iv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform4iv(location, value)
-      break
-    }
-    case '1fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform1fv(location, value)
-      break
-    }
-    case '2fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform2fv(location, value)
-      break
-    }
-    case '3fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform3fv(location, value)
-      break
-    }
-    case '4fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniform4fv(location, value)
-      break
-    }
-    case 'Matrix2fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniformMatrix2fv(location, false, value)
-      break
-    }
-    case 'Matrix3fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniformMatrix3fv(location, false, value)
-      break
-    }
-    case 'Matrix4fv': {
-      // @ts-expect-error TODO: Recognize type from generic.
-      gl.uniformMatrix4fv(location, false, value)
-      break
-    }
-    default:
-      break
+    case '1iv':
+      return gl.uniform1iv(location, value)
+    case '2iv':
+      return gl.uniform2iv(location, value)
+    case '3iv':
+      return gl.uniform3iv(location, value)
+    case '4iv':
+      return gl.uniform4iv(location, value)
+    case '1fv':
+      return gl.uniform1fv(location, value)
+    case '2fv':
+      return gl.uniform2fv(location, value)
+    case '3fv':
+      return gl.uniform3fv(location, value)
+    case '4fv':
+      return gl.uniform4fv(location, value)
+    case 'Matrix2fv':
+      return gl.uniformMatrix2fv(location, false, value)
+    case 'Matrix3fv':
+      return gl.uniformMatrix3fv(location, false, value)
+    case 'Matrix4fv':
+      return gl.uniformMatrix4fv(location, false, value)
   }
 }
 
