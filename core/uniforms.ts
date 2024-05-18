@@ -42,10 +42,10 @@ export function isMatrixType(t: string, v: number[] | number): v is number[] {
   return t.includes('Matrix') && Array.isArray(v)
 }
 export function isVectorListType(t: string, v: number[] | number): v is number[] {
-  return t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
+  return t.includes('v') && Array.isArray(v) && v.length > Number.parseInt(t.charAt(0))
 }
 function isVectorType(t: string, v: number[] | number): v is Vector4 {
-  return !t.includes('v') && Array.isArray(v) && v.length > parseInt(t.charAt(0))
+  return !t.includes('v') && Array.isArray(v) && v.length > Number.parseInt(t.charAt(0))
 }
 export const processUniform = <T extends UniformType>(
   gl: WebGLRenderingContext,

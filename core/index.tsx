@@ -1,4 +1,4 @@
-import React, { CSSProperties, Component } from 'react'
+import { type CSSProperties, Component } from 'react'
 import { log } from './logging'
 import {
   ClampToEdgeWrapping,
@@ -13,10 +13,10 @@ import {
   Texture,
 } from './texture'
 import {
-  UniformType,
-  Vector2,
-  Vector3,
-  Vector4,
+  type UniformType,
+  type Vector2,
+  type Vector3,
+  type Vector4,
   isMatrixType,
   isVectorListType,
   processUniform,
@@ -428,11 +428,11 @@ export class Shader extends Component<Props, unknown> {
         const tempObject: { arraySize?: string } = {}
         if (isMatrixType(type, value)) {
           const arrayLength = type.length
-          const val = parseInt(type.charAt(arrayLength - 3))
+          const val = Number.parseInt(type.charAt(arrayLength - 3))
           const numberOfMatrices = Math.floor(value.length / (val * val))
           if (value.length > val * val) tempObject.arraySize = `[${numberOfMatrices}]`
         } else if (isVectorListType(type, value)) {
-          tempObject.arraySize = `[${Math.floor(value.length / parseInt(type.charAt(0)))}]`
+          tempObject.arraySize = `[${Math.floor(value.length / Number.parseInt(type.charAt(0)))}]`
         }
         this.uniforms[name] = { type: glslType, isNeeded: false, value, ...tempObject }
       }
@@ -476,9 +476,7 @@ export class Shader extends Component<Props, unknown> {
           this.props.onError?.(e)
           if (onDoneLoadingTextures) onDoneLoadingTextures()
         })
-    } else {
-      if (onDoneLoadingTextures) onDoneLoadingTextures()
-    }
+    } else if (onDoneLoadingTextures) onDoneLoadingTextures()
   }
   preProcessFragment = (fragment: string) => {
     const { precision, devicePixelRatio = 1 } = this.props
