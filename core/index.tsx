@@ -37,6 +37,7 @@ export {
 
 export type { Vector2, Vector3, Vector4 }
 
+const VERSIONS = ['100', '300 es', '310 es'];
 const PRECISIONS = ['lowp', 'mediump', 'highp']
 const FS_MAIN_SHADER = `\nvoid main(void){
     vec4 color = vec4(0.0,0.0,0.0,1.0);
@@ -88,6 +89,11 @@ type TextureParams = {
 type Props = {
   /** Fragment shader GLSL code. */
   fs: string
+
+  /**
+   * The version of the GLSL code. Defaults to "300 es"
+   */
+  version?: string
 
   /** Vertex shader GLSL code. */
   vs?: string
@@ -479,7 +485,16 @@ export class Shader extends Component<Props, unknown> {
     } else if (onDoneLoadingTextures) onDoneLoadingTextures()
   }
   preProcessFragment = (fragment: string) => {
-    const { precision, devicePixelRatio = 1 } = this.props
+    const { version, precision, devicePixelRatio = 1 } = this.props
+    const isValidVersion = VERSIONS.includes(version ?? '300 es')
+    const versionString = `#version ${isValidVersion ? version : VERSIONS[1]}\n`
+    if (!isValidVersion) {
+      this.props.onWarning?.(
+          log(
+              `wrong version ${version}, please make sure to pass one of a valid version 100, 300 es, 310es, by default you shader version will be set to 300 es.`,
+          ),
+      )
+    }
     const isValidPrecision = PRECISIONS.includes(precision ?? 'highp')
     const precisionString = `precision ${isValidPrecision ? precision : PRECISIONS[1]} float;\n`
     if (!isValidPrecision) {
@@ -489,7 +504,8 @@ export class Shader extends Component<Props, unknown> {
         ),
       )
     }
-    let fs = precisionString
+    let fs = versionString
+      .concat(precisionString)
       .concat(`#define DPR ${devicePixelRatio.toFixed(1)}\n`)
       .concat(fragment.replace(/texture\(/g, 'texture2D('))
     for (const uniform of Object.keys(this.uniforms)) {
