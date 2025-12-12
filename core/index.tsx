@@ -167,7 +167,7 @@ export interface ReactShaderProps {
   onWarning?: (warning: string) => void;
 }
 
-export function ReactShader({
+export function Shader({
   fs,
   vs = BASIC_VS,
   textures = [],
