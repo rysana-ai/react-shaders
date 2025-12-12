@@ -201,10 +201,9 @@ export class Shader extends Component<Props, unknown> {
       this.processTextures()
       this.initShaders(this.preProcessFragment(fs || BASIC_FS), vs || BASIC_VS)
       this.initBuffers()
-      // @ts-expect-error apparently this thing needs a timestamp but it's not used?
-      this.drawScene()
       this.addEventListeners()
       this.onResize()
+      requestAnimationFrame(this.drawScene)
     }
   }
   shouldComponentUpdate = () => false
