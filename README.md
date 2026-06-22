@@ -1,14 +1,17 @@
-# **React Shaders** [![lusat minzip package size](https://img.shields.io/bundlephobia/minzip/react-shaders?label=zipped)](https://www.npmjs.com/package/react-shaders) [![lusat package version](https://img.shields.io/npm/v/react-shaders.svg?colorB=green)](https://www.npmjs.com/package/react-shaders) [![lusat license](https://img.shields.io/npm/l/react-shaders.svg?colorB=lightgrey)](https://github.com/rysanacom/react-shaders/blob/main/LICENSE)
+# `react-shaders` &nbsp; <a href="https://www.npmjs.com/package/react-shaders"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/npm/react-shaders.svg?variant=ghost" /><img alt="badge" src="https://shieldcn.dev/npm/react-shaders.svg?variant=ghost&amp;mode=light" /></picture></a> <a href="https://www.npmjs.com/package/react-shaders"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/npm/dm/react-shaders.svg?variant=ghost&amp;logo=false" /><img alt="downloads" src="https://shieldcn.dev/npm/dm/react-shaders.svg?variant=ghost&amp;mode=light&amp;logo=false" /></picture></a>  <a href="https://x.com/rysana"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/x/follow/rysana.svg?variant=ghost" /><img alt="follow" src="https://shieldcn.dev/x/follow/rysana.svg?variant=ghost&amp;mode=light" /></picture></a>
 
-**React Shaders** is an open source library for creating GLSL/WebGL shaders with support for modern shader bindings like those in Shadertoy. `react-shaders` is built on top of [Morgan Villedieu's `shadertoy-react`](https://github.com/mvilledieu/shadertoy-react).
 
-<table>
-<tr>
-<th width="440px"><code>index.tsx</code> (React)</th>
-<th width="440px"><code>example.glsl</code> (GLSL)</th>
-</tr>
-<tr>
-<td>
+**React Shaders** is an open source library for creating GLSL/WebGL shaders with support for modern shader bindings like those in Shadertoy.
+  
+</p>
+
+**Install:**
+
+```bash
+npm i react-shaders
+```
+
+**Usage:**
 
 ```jsx
 import { Shader } from 'react-shaders'
@@ -18,10 +21,6 @@ return (
   <Shader fs={code} />
 )
 ```
-
-</td>
-<td>
-
 ```glsl
 void mainImage(out vec4 O,in vec2 I){
   I=.5-(I/iResolution.xy);
@@ -30,35 +29,3 @@ void mainImage(out vec4 O,in vec2 I){
   float z=.5*sin((dot(I,I)+iTime*5e-2)/.01);
   O=vec4(col*(1.+z),1.);}
 ```
-
-</td>
-</tr>
-</table>
-
-### Installation
-
-<table>
-<tr>
-<td>
-
-```bash
-npm i react-shaders
-```
-
-</td>
-<td>
-
-```bash
-pnpm i react-shaders
-```
-
-</td>
-<td>
-
-```bash
-bun add react-shaders
-```
-
-</td>
-</tr>
-</table>
