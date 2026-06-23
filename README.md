@@ -1,6 +1,9 @@
 # react-shaders &nbsp; <a href="https://www.npmjs.com/package/react-shaders"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/npm/react-shaders.svg?variant=ghost" /><img alt="badge" src="https://shieldcn.dev/npm/react-shaders.svg?variant=ghost&amp;mode=light" /></picture></a> <a href="https://www.npmjs.com/package/react-shaders"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/npm/dm/react-shaders.svg?variant=ghost&amp;logo=false" /><img alt="downloads" src="https://shieldcn.dev/npm/dm/react-shaders.svg?variant=ghost&amp;mode=light&amp;logo=false" /></picture></a>  <a href="https://x.com/rysana"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/x/follow/rysana.svg?variant=ghost" /><img alt="follow" src="https://shieldcn.dev/x/follow/rysana.svg?variant=ghost&amp;mode=light" /></picture></a>
 
 A TypeScript library for creating GLSL/WebGL shaders with support for modern bindings like Shadertoy's.
+- Zero dependencies
+- Tiny
+- Just works
   
 </p>
 
